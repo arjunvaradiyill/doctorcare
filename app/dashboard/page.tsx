@@ -587,12 +587,10 @@ export default function DashboardPage() {
                   <span className="flex items-center gap-2 font-medium">
                     <svg
                       className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
                     >
-                      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.967c.3.921-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.175 0l-3.38 2.455c-.784.57-1.838-.197-1.54-1.118l1.287-3.967a1 1 0 00-.364-1.118L2.049 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/>
                     </svg>
                     Completed
                   </span>
@@ -924,25 +922,29 @@ export default function DashboardPage() {
                 <div className="bg-gray-50 rounded-lg p-4">
                   <h4 className="font-semibold text-gray-900 mb-3">System Statistics</h4>
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="text-center">
+                    <div className="text-center flex flex-col items-center">
+                      <Image src="/Views Icon.png" alt="Views Icon" width={32} height={32} className="mx-auto mb-1" />
                       <div className="text-2xl font-bold text-blue-600">
                         {dashboardStats?.total_appointments || 0}
                       </div>
                       <div className="text-sm text-gray-600">Total Appointments</div>
                     </div>
-                    <div className="text-center">
+                    <div className="text-center flex flex-col items-center">
+                      <Image src="/Users Icon.png" alt="Users Icon" width={32} height={32} className="mx-auto mb-1" />
                       <div className="text-2xl font-bold text-green-600">
                         {dashboardStats?.total_patients || 0}
                       </div>
                       <div className="text-sm text-gray-600">Total Patients</div>
                     </div>
-                    <div className="text-center">
+                    <div className="text-center flex flex-col items-center">
+                      <Image src="/Features Icon.png" alt="Features Icon" width={32} height={32} className="mx-auto mb-1" />
                       <div className="text-2xl font-bold text-purple-600">
                         {dashboardStats?.total_doctors || 0}
                       </div>
                       <div className="text-sm text-gray-600">Total Doctors</div>
                     </div>
-                    <div className="text-center">
+                    <div className="text-center flex flex-col items-center">
+                      <Image src="/Icon.png" alt="Completed Icon" width={32} height={32} className="mx-auto mb-1" />
                       <div className="text-2xl font-bold text-orange-600">
                         {dashboardStats?.completed_appointments || 0}
                       </div>

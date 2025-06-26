@@ -66,10 +66,10 @@ export default function PatientAppointments() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f7f8fa] flex items-center justify-center py-16">
-      <div className="w-full max-w-6xl flex flex-col md:flex-row gap-16 items-center">
+    <div className="p-8">
+      <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
         {/* Left: Booking Form */}
-        <div className="flex-1 bg-white rounded-2xl p-12 flex flex-col justify-between shadow-none min-h-[600px]">
+        <div className="md:col-span-2 w-full bg-white rounded-2xl p-12 flex flex-col justify-between shadow-lg">
           <div>
             <h2 className="text-3xl font-bold text-black mb-10">Booking Appointment</h2>
             <form className="space-y-8 flex flex-col h-full">
@@ -142,14 +142,14 @@ export default function PatientAppointments() {
                 <textarea className="w-full px-5 py-3 border border-purple-400 rounded-xl focus:ring-2 focus:ring-purple-400 focus:border-purple-400 text-black placeholder:text-black bg-white min-h-[80px]" placeholder="Patient complains of mild abdominal discomfort, mostly after meals. No signs of nausea or vomiting. Vitals are within normal range. Suggested dietary changes and prescribed a mild antacid. Will follow up in one week if symptoms persist."></textarea>
               </div>
               <div className="flex-1 flex flex-col justify-end">
-                <button type="submit" className="w-full mt-10 bg-[#7b6ffb] hover:bg-[#6a5de8] text-white text-lg font-bold py-5 rounded-xl shadow-none transition-all">Confirm Booking</button>
+                <button type="submit" className="w-full mt-10 bg-[#7b6ffb] hover:bg-[#6a5de8] text-white text-lg font-bold py-5 rounded-xl shadow-lg transition-all">Confirm Booking</button>
               </div>
             </form>
           </div>
         </div>
         {/* Right: Doctor Card */}
-        <div className="flex flex-col justify-center items-center bg-transparent min-w-[370px] min-h-[600px] relative">
-          <div className="w-[350px] h-[500px] rounded-2xl border border-purple-400 overflow-visible relative flex flex-col items-center bg-white p-4">
+        <div className="md:col-span-1 w-full flex flex-col justify-center items-center bg-transparent relative">
+          <div className="w-full rounded-2xl border border-purple-400 overflow-visible relative flex flex-col items-center bg-white p-4 shadow-lg" style={{minHeight: 500}}>
             <div className="w-full flex flex-col items-center relative">
               <img src="/doctor.png" alt="Doctor" className="w-[340px] h-[340px] object-cover object-top rounded-t-2xl mt-2 drop-shadow-[0_0_16px_white]" style={{boxShadow: '0 0 0 6px #fff, 0 0 16px 4px #fff'}} />
               <div className="absolute left-0 right-0 mx-auto -bottom-10 z-10 px-4">

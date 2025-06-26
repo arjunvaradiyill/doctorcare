@@ -36,8 +36,8 @@ const ProfileForm = () => {
     alert("Profile saved! (placeholder)");
   };
   return (
-    <div className="flex justify-center items-start min-h-screen bg-[#f7f8fa] pt-4 pb-16">
-      <form onSubmit={handleSubmit} className="w-full max-w-5xl p-0">
+    <div className="flex justify-center items-start bg-[#f7f8fa] pt-4 pb-16 w-full">
+      <form onSubmit={handleSubmit} className="w-full p-0">
         {/* ...profile form fields as before... */}
         {/* For brevity, you can copy the form fields from the dashboard page */}
         <h2 className="text-xl font-extrabold mb-4 text-gray-900 text-left">Personal Details</h2>
@@ -232,8 +232,8 @@ export default function MedicalRecordsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f7f8fa] py-8 px-4 md:px-12">
-      <div className="max-w-6xl mx-auto">
+    <div className="min-h-screen min-w-[1200px] bg-[#f7f8fa] py-8 px-4 md:px-12">
+      <div className="w-full">
         {/* Profile Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
           <div className="flex items-center gap-4">
@@ -361,7 +361,7 @@ export default function MedicalRecordsPage() {
               </div>
 
               {/* Documents Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 w-full">
                 {filteredDocuments.map((document) => (
                   <div
                     key={document.id}

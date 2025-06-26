@@ -110,7 +110,7 @@ export default function Appointment() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f7f8fa] flex font-sans">
+    <div className="min-h-screen min-w-[1200px] bg-[#f7f8fa] flex font-sans">
       {/* Sidebar */}
       <DoctorSidebar />
       {/* Main Content */}

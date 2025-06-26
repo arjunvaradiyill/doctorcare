@@ -39,7 +39,7 @@ const recentAppointments = [
 
 export default function PatientDashboard() {
   return (
-    <div className="p-6 md:p-10 bg-[#f7f8fa] min-h-screen">
+    <div className="p-6 md:p-10 bg-[#f7f8fa] min-h-screen min-w-[1200px]">
       {/* Summary Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
         {summaryCards.map((card, idx) => (

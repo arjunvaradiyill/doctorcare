@@ -213,14 +213,37 @@ const LoginForm = ({ onForgotPassword }: LoginFormProps) => {
         </div>
         <div>
           <label className="block text-base font-semibold mb-1 text-black">Password</label>
+          <div className="relative">
             <input
               type={showPassword ? "text" : "password"}
               placeholder="Enter Password"
               value={password}
               onChange={e => setPassword(e.target.value)}
-            className="w-full px-4 py-3 border border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition text-base bg-[#f8fbff] placeholder-[#1E1E1E] text-[#1E1E1E] shadow"
+              className="w-full px-4 py-3 border border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition text-base bg-[#f8fbff] placeholder-[#1E1E1E] text-[#1E1E1E] shadow pr-10"
               disabled={isLoading || isSuccess}
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+              tabIndex={-1}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+            >
+              {showPassword ? (
+                // Eye-off icon
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 3l18 18M10.477 10.477A3 3 0 0112 9c1.657 0 3 1.343 3 3 0 .523-.134 1.016-.366 1.44m-1.157 1.157A3 3 0 019 12c0-.523.134-1.016.366-1.44" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 12c0-4.418-4.03-8-9-8S3 7.582 3 12c0 1.657.672 3.156 1.757 4.243M9.88 9.88l4.24 4.24" />
+                </svg>
+              ) : (
+                // Eye icon
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+              )}
+            </button>
+          </div>
         </div>
         <div className="flex items-center justify-between mt-1">
           <label className="flex items-center text-sm text-gray-700">
@@ -267,33 +290,28 @@ const LoginForm = ({ onForgotPassword }: LoginFormProps) => {
         <button
           type="submit"
           disabled={isLoading || isSuccess}
-          className={`w-full bg-[#1886ff] text-white py-3 rounded-lg font-semibold shadow transition text-base mt-1 ${
-            isLoading || isSuccess
-              ? 'opacity-50 cursor-not-allowed' 
-              : 'hover:bg-[#0f6cd6]'
-          }`}
+          className="w-full bg-[#1886ff] text-white py-2 rounded-md font-bold shadow transition text-base mt-2 min-h-[36px]"
+          aria-label="Create Account"
         >
-          {isLoading ? 'Signing in...' : isSuccess ? 'Success!' : 'submit'}
+          {isLoading ? 'Creating account...' : isSuccess ? 'Success!' : 'Submit'}
         </button>
         <button
           type="button"
-          className="w-full flex items-center justify-center gap-2 border border-blue-400 py-3 rounded-lg font-semibold text-blue-700 bg-white hover:bg-blue-50 transition text-base shadow"
+          className="w-full flex items-center justify-center gap-2 border-2 border-blue-400 py-2 rounded-md font-bold text-blue-700 bg-white hover:bg-blue-50 transition text-base shadow min-h-[36px]"
           disabled={isLoading || isSuccess}
+          aria-label="Sign up with Google"
         >
-          <svg width="20" height="20" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <g clipPath="url(#clip0_17_40)">
-              <path d="M47.532 24.5528C47.532 22.9214 47.3997 21.2811 47.1175 19.6768H24.48V28.9181H37.4434C36.9055 31.8988 35.177 34.5356 32.6461 36.2111V42.2078H40.3801C44.9217 38.0278 47.532 31.8547 47.532 24.5528Z" fill="#4285F4"/>
-              <path d="M24.48 48.0016C30.9527 48.0016 36.4116 45.8764 40.3889 42.2078L32.6549 36.2111C30.5031 37.675 27.7252 38.5039 24.4888 38.5039C18.2275 38.5039 12.9187 34.2798 11.0139 28.6006H3.03296V34.7825C7.10718 42.8868 15.4056 48.0016 24.48 48.0016Z" fill="#34A853"/>
-              <path d="M11.0051 28.6006C10.9999 28.3626 10.9999 28.1146 10.9999 27.8666C10.9999 27.6186 10.9999 27.3706 11.0051 27.1326V20.3501H3.03298C2.37068 21.6631 2.00002 23.1154 2.00002 24.6666C2.00002 26.2178 2.37068 27.6701 3.03298 28.9831L11.0051 28.6006Z" fill="#FBBC04"/>
-              <path d="M24.48 10.8833C27.9019 10.8833 30.7923 12.0863 32.7994 14.2665L40.2697 6.80767C36.1361 2.90521 30.5527 0.00146484 24.48 0.00146484C15.4056 0.00146484 7.10718 5.1162 3.03296 13.2206L11.005 19.4026C12.901 13.7233 18.2187 9.49926 24.48 9.49926V10.8833Z" fill="#EA4335"/>
+          {/* Official Google G SVG */}
+          <svg className="w-5 h-5" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+            <g>
+              <path fill="#4285F4" d="M24 9.5c3.54 0 6.04 1.53 7.43 2.81l5.52-5.52C33.64 3.13 29.2 1 24 1 14.82 1 6.91 6.98 3.32 15.09l6.44 5.01C11.6 14.13 17.32 9.5 24 9.5z"/>
+              <path fill="#34A853" d="M46.1 24.55c0-1.64-.15-3.22-.43-4.74H24v9.01h12.41c-.54 2.91-2.18 5.38-4.66 7.04l7.19 5.59C43.99 37.13 46.1 31.36 46.1 24.55z"/>
+              <path fill="#FBBC05" d="M9.76 28.09A14.5 14.5 0 019.5 24c0-1.41.23-2.78.63-4.09l-6.44-5.01A23.01 23.01 0 001 24c0 3.7.9 7.19 2.49 10.27l6.44-5.01z"/>
+              <path fill="#EA4335" d="M24 46.5c6.2 0 11.39-2.05 15.19-5.59l-7.19-5.59c-2.01 1.35-4.59 2.16-8 2.16-6.68 0-12.4-4.63-14.24-10.81l-6.44 5.01C6.91 41.02 14.82 46.5 24 46.5z"/>
+              <path fill="none" d="M1 1h46v46H1z"/>
             </g>
-            <defs>
-              <clipPath id="clip0_17_40">
-                <rect width="48" height="48" fill="white"/>
-              </clipPath>
-            </defs>
           </svg>
-          Sign in with Google
+          Sign up with Google
         </button>
       </form>
     </div>
@@ -639,6 +657,8 @@ const NewPasswordPage = ({ onBack }: { onBack: () => void }) => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
 
+  const passwordsMatch = password && confirmPassword && password === confirmPassword;
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -705,20 +725,22 @@ const NewPasswordPage = ({ onBack }: { onBack: () => void }) => {
                 />
                 <button
                   type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
                   tabIndex={-1}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-2xl text-gray-500 hover:text-blue-500 focus:outline-none"
-                  onClick={() => setShowPassword(v => !v)}
-                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? (
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12.001C3.226 15.885 7.244 19.5 12 19.5c1.658 0 3.237-.314 4.646-.885M21.065 11.977A10.45 10.45 0 0021.998 12c-1.292 3.885-5.31 7.5-10.066 7.5a10.45 10.45 0 01-4.646-.885M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 3l18 18" />
+                    // Eye-off icon
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 3l18 18M10.477 10.477A3 3 0 0112 9c1.657 0 3 1.343 3 3 0 .523-.134 1.016-.366 1.44m-1.157 1.157A3 3 0 019 12c0-.523.134-1.016.366-1.44" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M21 12c0-4.418-4.03-8-9-8S3 7.582 3 12c0 1.657.672 3.156 1.757 4.243M9.88 9.88l4.24 4.24" />
                     </svg>
                   ) : (
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12C3.5 7.5 7.5 4.5 12 4.5c4.5 0 8.5 3 9.75 7.5-1.25 4.5-5.25 7.5-9.75 7.5-4.5 0-8.5-3-9.75-7.5z" />
+                    // Eye icon
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                     </svg>
                   )}
                 </button>
@@ -732,27 +754,39 @@ const NewPasswordPage = ({ onBack }: { onBack: () => void }) => {
                     placeholder="Confirm new password"
                   value={confirmPassword}
                   onChange={e => setConfirmPassword(e.target.value)}
-                    className="w-full px-6 py-4 border-2 border-blue-400 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-400 transition text-xl bg-[#f8fbff] placeholder-[#1E1E1E] text-[#1E1E1E] shadow-lg"
+                    className={`w-full px-3 py-2 pr-10 border rounded-lg focus:outline-none focus:ring-2 transition-all duration-200 bg-white text-gray-900 placeholder-gray-500 shadow-sm hover:shadow-md text-sm ${
+                    showPasswordWarning ? 'border-red-400 focus:ring-red-500' : passwordsMatch ? 'border-green-400 focus:ring-green-500' : 'border-gray-300 focus:ring-blue-500'
+                  }`}
+                    required
                 />
                 <button
                   type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
                   tabIndex={-1}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-2xl text-gray-500 hover:text-blue-500 focus:outline-none"
-                  onClick={() => setShowConfirmPassword(v => !v)}
-                  aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                  aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
                 >
                   {showConfirmPassword ? (
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12.001C3.226 15.885 7.244 19.5 12 19.5c1.658 0 3.237-.314 4.646-.885M21.065 11.977A10.45 10.45 0 0021.998 12c-1.292 3.885-5.31 7.5-10.066 7.5a10.45 10.45 0 01-4.646-.885M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 3l18 18" />
+                    // Eye-off icon
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 3l18 18M10.477 10.477A3 3 0 0112 9c1.657 0 3 1.343 3 3 0 .523-.134 1.016-.366 1.44m-1.157 1.157A3 3 0 019 12c0-.523.134-1.016.366-1.44" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M21 12c0-4.418-4.03-8-9-8S3 7.582 3 12c0 1.657.672 3.156 1.757 4.243M9.88 9.88l4.24 4.24" />
                     </svg>
                   ) : (
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12C3.5 7.5 7.5 4.5 12 4.5c4.5 0 8.5 3 9.75 7.5-1.25 4.5-5.25 7.5-9.75 7.5-4.5 0-8.5-3-9.75-7.5z" />
+                    // Eye icon
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                     </svg>
                   )}
                 </button>
+                {passwordsMatch && confirmPassword && (
+                  <div className="absolute left-2 top-1/2 -translate-y-1/2 text-green-500">
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                )}
               </div>
             </div>
               {success && (
@@ -801,7 +835,6 @@ const RegisterForm = ({ onBack }: { onBack: () => void }) => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [agree, setAgree] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -815,7 +848,7 @@ const RegisterForm = ({ onBack }: { onBack: () => void }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!firstName || !lastName || !username || !password || !confirmPassword || !email) {
+    if (!firstName || !lastName || !password || !confirmPassword || !email) {
       setError('Please fill in all required fields');
       return;
     }
@@ -846,239 +879,279 @@ const RegisterForm = ({ onBack }: { onBack: () => void }) => {
   };
 
   return (
-    <div className="w-full max-w-md flex flex-col justify-center items-center h-full px-4 sm:px-8 md:px-10 py-6">
-      <h2 className="text-xl sm:text-2xl font-bold text-[#3498db] mb-4 leading-tight text-left w-full uppercase tracking-wide" id="register-heading">
-        REGISTER FORM
-      </h2>
-      <form className="space-y-4 w-full" onSubmit={handleSubmit} style={{minWidth: 0}} aria-labelledby="register-heading" role="form">
-        {/* First row: First Name, Last Name, and Username */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div>
-            <label className="block text-sm font-semibold mb-1 text-gray-700" htmlFor="register-firstname">First Name</label>
-            <input
-              id="register-firstname"
-              type="text"
-              placeholder="First Name"
-              value={firstName}
-              onChange={e => setFirstName(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 transition text-sm bg-white placeholder-gray-500 text-gray-900 shadow"
-              aria-required="true"
-              aria-label="First Name"
-              autoComplete="given-name"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-semibold mb-1 text-gray-700" htmlFor="register-lastname">Last Name</label>
-            <input
-              id="register-lastname"
-              type="text"
-              placeholder="Last Name"
-              value={lastName}
-              onChange={e => setLastName(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 transition text-sm bg-white placeholder-gray-500 text-gray-900 shadow"
-              aria-required="true"
-              aria-label="Last Name"
-              autoComplete="family-name"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-semibold mb-1 text-gray-700" htmlFor="register-username">Username</label>
-            <input
-              id="register-username"
-              type="text"
-              placeholder="Username"
-              value={username}
-              onChange={e => setUsername(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 transition text-sm bg-white placeholder-gray-500 text-gray-900 shadow"
-              aria-required="true"
-              aria-label="Username"
-              autoComplete="username"
-            />
-          </div>
+    <div className="w-full max-w-md flex flex-col justify-center items-center h-full px-4 py-6">
+      <div className="w-full">
+        {/* Header */}
+        <div className="text-center mb-6">
+          <h2 className="text-2xl font-bold text-gray-900 mb-1">
+            Create Account
+          </h2>
+          <p className="text-gray-600 text-xs">
+            Join us to start your healthcare journey
+          </p>
         </div>
-        {/* Second row: Email and Role */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-semibold mb-1 text-gray-700" htmlFor="register-email">Your Email</label>
-            <input
-              id="register-email"
-              type="email"
-              placeholder="Enter your email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 transition text-sm bg-white placeholder-gray-500 text-gray-900 shadow"
-              aria-required="true"
-              aria-label="Email"
-              autoComplete="email"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-semibold mb-1 text-gray-700" htmlFor="register-role">Role</label>
-            <select
-              id="register-role"
-              value={role}
-              onChange={e => setRole(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 transition text-sm bg-white text-gray-900 shadow"
-              aria-required="true"
-              aria-label="Role"
-            >
-              <option value="patient">Patient</option>
-              <option value="doctor">Doctor</option>
-              <option value="admin">Admin</option>
-            </select>
-          </div>
-        </div>
-        {/* Password and Confirm Password row */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-semibold mb-1 text-gray-700" htmlFor="register-password">Password</label>
-            <div className="relative">
+
+        <form className="space-y-4" onSubmit={handleSubmit}>
+          {/* Name Fields */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="space-y-1">
+              <label className="block text-xs font-medium text-gray-700">
+                First Name *
+              </label>
               <input
-                id="register-password"
-                type={showPassword ? "text" : "password"}
-                placeholder="Password"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition text-sm bg-white placeholder-gray-500 text-gray-900 shadow ${passwordValid ? 'border-green-400 focus:ring-green-400' : 'border-gray-300 focus:ring-blue-400'}`}
-                aria-required="true"
-                aria-label="Password"
-                autoComplete="new-password"
+                type="text"
+                placeholder="Enter first name"
+                value={firstName}
+                onChange={e => setFirstName(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white text-gray-900 placeholder-gray-500 shadow-sm hover:shadow-md text-sm"
+                required
               />
-              <button
-                type="button"
-                tabIndex={-1}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-base text-gray-500 hover:text-blue-500 focus:outline-none"
-                onClick={() => setShowPassword(v => !v)}
-                aria-label={showPassword ? "Hide password" : "Show password"}
-                aria-pressed={showPassword}
-              >
-                {showPassword ? (
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12.001C3.226 15.885 7.244 19.5 12 19.5c1.658 0 3.237-.314 4.646-.885M21.065 11.977A10.45 10.45 0 0021.998 12c-1.292 3.885-5.31 7.5-10.066 7.5a10.45 10.45 0 01-4.646-.885M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 3l18 18" />
-                  </svg>
-                ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12C3.5 7.5 7.5 4.5 12 4.5c4.5 0 8.5 3 9.75 7.5-1.25 4.5-5.25 7.5-9.75 7.5-4.5 0-8.5-3-9.75-7.5z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                )}
-              </button>
-              {passwordValid && (
-                <span className="absolute left-2 top-1/2 -translate-y-1/2 text-green-500">
-                  <svg width="16" height="16" fill="none" viewBox="0 0 20 20"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M5 10.5l3.5 3.5 6-6"/></svg>
-                </span>
-        )}
-      </div>
-          </div>
-          <div>
-            <label className="block text-sm font-semibold mb-1 text-gray-700" htmlFor="register-confirm-password">Confirm Password</label>
-            <div className="relative">
+            </div>
+            <div className="space-y-1">
+              <label className="block text-xs font-medium text-gray-700">
+                Last Name *
+              </label>
               <input
-                id="register-confirm-password"
-                type={showConfirmPassword ? "text" : "password"}
-                placeholder="Confirm Password"
-                value={confirmPassword}
-                onChange={e => setConfirmPassword(e.target.value)}
-                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition text-sm bg-white placeholder-gray-500 text-gray-900 shadow ${showPasswordWarning ? 'border-yellow-400 focus:ring-yellow-400' : 'border-gray-300 focus:ring-blue-400'}`}
-                aria-required="true"
-                aria-label="Confirm Password"
-                autoComplete="new-password"
+                type="text"
+                placeholder="Enter last name"
+                value={lastName}
+                onChange={e => setLastName(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white text-gray-900 placeholder-gray-500 shadow-sm hover:shadow-md text-sm"
+                required
               />
-              <button
-                type="button"
-                tabIndex={-1}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-base text-gray-500 hover:text-blue-500 focus:outline-none"
-                onClick={() => setShowConfirmPassword(v => !v)}
-                aria-label={showConfirmPassword ? "Hide password" : "Show password"}
-                aria-pressed={showConfirmPassword}
+            </div>
+          </div>
+
+          {/* Email and Role */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="space-y-1">
+              <label className="block text-xs font-medium text-gray-700">
+                Email Address *
+              </label>
+              <input
+                type="email"
+                placeholder="Enter your email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white text-gray-900 placeholder-gray-500 shadow-sm hover:shadow-md text-sm"
+                required
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="block text-xs font-medium text-gray-700">
+                Role *
+              </label>
+              <select
+                value={role}
+                onChange={e => setRole(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white text-gray-900 shadow-sm hover:shadow-md text-sm"
+                required
               >
-                {showConfirmPassword ? (
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12.001C3.226 15.885 7.244 19.5 12 19.5c1.658 0 3.237-.314 4.646-.885M21.065 11.977A10.45 10.45 0 0021.998 12c-1.292 3.885-5.31 7.5-10.066 7.5a10.45 10.45 0 01-4.646-.885M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 3l18 18" />
-                  </svg>
-                ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12C3.5 7.5 7.5 4.5 12 4.5c4.5 0 8.5 3 9.75 7.5-1.25 4.5-5.25 7.5-9.75 7.5-4.5 0-8.5-3-9.75-7.5z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
+                <option value="patient">Patient</option>
+                <option value="doctor">Doctor</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Password Fields */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="space-y-1">
+              <label className="block text-xs font-medium text-gray-700">
+                Password *
+              </label>
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Create password"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  className={`w-full px-3 py-2 pr-10 border rounded-lg focus:outline-none focus:ring-2 transition-all duration-200 bg-white text-gray-900 placeholder-gray-500 shadow-sm hover:shadow-md text-sm ${
+                    passwordValid ? 'border-green-400 focus:ring-green-500' : 'border-gray-300 focus:ring-blue-500'
+                  }`}
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+                  tabIndex={-1}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? (
+                    // Eye-off icon
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 3l18 18M10.477 10.477A3 3 0 0112 9c1.657 0 3 1.343 3 3 0 .523-.134 1.016-.366 1.44m-1.157 1.157A3 3 0 019 12c0-.523.134-1.016.366-1.44" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M21 12c0-4.418-4.03-8-9-8S3 7.582 3 12c0 1.657.672 3.156 1.757 4.243M9.88 9.88l4.24 4.24" />
+                    </svg>
+                  ) : (
+                    // Eye icon
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <label className="block text-xs font-medium text-gray-700">
+                Confirm Password *
+              </label>
+              <div className="relative">
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  placeholder="Confirm password"
+                  value={confirmPassword}
+                  onChange={e => setConfirmPassword(e.target.value)}
+                  className={`w-full px-3 py-2 pr-10 border rounded-lg focus:outline-none focus:ring-2 transition-all duration-200 bg-white text-gray-900 placeholder-gray-500 shadow-sm hover:shadow-md text-sm ${
+                    showPasswordWarning ? 'border-red-400 focus:ring-red-500' : passwordsMatch ? 'border-green-400 focus:ring-green-500' : 'border-gray-300 focus:ring-blue-500'
+                  }`}
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+                  tabIndex={-1}
+                  aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showConfirmPassword ? (
+                    // Eye-off icon
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 3l18 18M10.477 10.477A3 3 0 0112 9c1.657 0 3 1.343 3 3 0 .523-.134 1.016-.366 1.44m-1.157 1.157A3 3 0 019 12c0-.523.134-1.016.366-1.44" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M21 12c0-4.418-4.03-8-9-8S3 7.582 3 12c0 1.657.672 3.156 1.757 4.243M9.88 9.88l4.24 4.24" />
+                    </svg>
+                  ) : (
+                    // Eye icon
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                  )}
+                </button>
+                {passwordsMatch && confirmPassword && (
+                  <div className="absolute left-2 top-1/2 -translate-y-1/2 text-green-500">
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
                 )}
-              </button>
+              </div>
               {showPasswordWarning && (
-                <span className="absolute left-2 top-1/2 -translate-y-1/2 text-yellow-500">
-                  <svg width="16" height="16" fill="none" viewBox="0 0 20 20"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M10 3v7m0 4h.01M10 17a7 7 0 100-14 7 7 0 000 14z"/></svg>
-                </span>
+                <p className="text-xs text-red-500">Passwords don't match</p>
               )}
             </div>
-            {showPasswordWarning && (
-              <div className="text-yellow-500 text-xs font-medium mt-1">Wrong Password</div>
-            )}
           </div>
-        </div>
-        {/* Terms and Conditions */}
-        <div className="flex items-center mt-1">
-          <input
-            id="register-terms"
-            type="checkbox"
-            checked={agree}
-            onChange={e => setAgree(e.target.checked)}
-            className="mr-2 accent-blue-500 w-3 h-3"
-            aria-required="true"
-          />
-          <label htmlFor="register-terms" className="text-sm text-gray-700">
-            I agree to the{' '}
-            <a href="#" className="text-blue-600 font-semibold underline hover:text-blue-800">Terms and Conditions</a>
-          </label>
-        </div>
-        {error && <div className="text-red-600 text-xs font-medium mt-1">{error}</div>}
-        {isSuccess && (
-          <div className="text-green-600 text-sm text-center bg-green-50 border border-green-200 rounded-lg px-3 py-2 flex items-center justify-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+
+          {/* Terms and Conditions */}
+          <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
+            <input
+              id="agree-checkbox"
+              type="checkbox"
+              checked={agree}
+              onChange={e => setAgree(e.target.checked)}
+              className="accent-blue-600 w-5 h-5 rounded border-2 border-blue-500 focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 transition-all duration-200 cursor-pointer"
+              required
+            />
+            <label
+              htmlFor="agree-checkbox"
+              className="text-xs text-gray-700 cursor-pointer leading-relaxed select-none"
+            >
+              I agree to the{' '}
+              <a href="#" className="text-blue-600 font-medium underline hover:text-blue-800 transition-colors">Terms and Conditions</a>
+              {' '}and{' '}
+              <a href="#" className="text-blue-600 font-medium underline hover:text-blue-800 transition-colors">Privacy Policy</a>
+            </label>
+          </div>
+
+          {/* Error Message */}
+          {error && (
+            <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-xs flex items-center space-x-2">
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+              <span>{error}</span>
+            </div>
+          )}
+
+          {/* Success Message */}
+          {isSuccess && (
+            <div className="p-3 bg-green-50 border border-green-200 rounded-lg text-green-600 text-xs flex items-center space-x-2">
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+              <span>Registration successful! Redirecting to login...</span>
+            </div>
+          )}
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-sm"
+          >
+              {isLoading ? (
+                <div className="flex items-center justify-center space-x-2">
+                  <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  <span>Creating Account...</span>
+                </div>
+              ) : isSuccess ? (
+                <div className="flex items-center justify-center space-x-2">
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <span>Success!</span>
+                </div>
+              ) : (
+                'Create Account'
+              )}
+          </button>
+
+          {/* Divider */}
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300"></div>
+            </div>
+            <div className="relative flex justify-center text-xs">
+              <span className="px-2 bg-white text-gray-500">Or continue with</span>
+            </div>
+          </div>
+
+          {/* Google Sign Up */}
+          <button
+            type="button"
+            className="w-full flex items-center justify-center space-x-2 py-2 px-3 border border-gray-300 rounded-lg font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all duration-200 shadow-sm hover:shadow-md text-sm"
+            disabled={isLoading || isSuccess}
+          >
+            {/* Official Google G SVG */}
+            <svg className="w-5 h-5" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+              <g>
+                <path fill="#4285F4" d="M24 9.5c3.54 0 6.04 1.53 7.43 2.81l5.52-5.52C33.64 3.13 29.2 1 24 1 14.82 1 6.91 6.98 3.32 15.09l6.44 5.01C11.6 14.13 17.32 9.5 24 9.5z"/>
+                <path fill="#34A853" d="M46.1 24.55c0-1.64-.15-3.22-.43-4.74H24v9.01h12.41c-.54 2.91-2.18 5.38-4.66 7.04l7.19 5.59C43.99 37.13 46.1 31.36 46.1 24.55z"/>
+                <path fill="#FBBC05" d="M9.76 28.09A14.5 14.5 0 019.5 24c0-1.41.23-2.78.63-4.09l-6.44-5.01A23.01 23.01 0 001 24c0 3.7.9 7.19 2.49 10.27l6.44-5.01z"/>
+                <path fill="#EA4335" d="M24 46.5c6.2 0 11.39-2.05 15.19-5.59l-7.19-5.59c-2.01 1.35-4.59 2.16-8 2.16-6.68 0-12.4-4.63-14.24-10.81l-6.44 5.01C6.91 41.02 14.82 46.5 24 46.5z"/>
+                <path fill="none" d="M1 1h46v46H1z"/>
+              </g>
             </svg>
-            Registration successful! Redirecting to login form...
-          </div>
-        )}
-        <button
-          type="submit"
-          disabled={isLoading || isSuccess}
-          className="w-full bg-[#1886ff] text-white py-2 rounded-md font-bold shadow transition text-base mt-2 min-h-[36px]"
-          aria-label="Create Account"
-        >
-          {isLoading ? 'Creating account...' : isSuccess ? 'Success!' : 'Create Account'}
-        </button>
-        <button
-          type="button"
-          className="w-full flex items-center justify-center gap-2 border-2 border-blue-400 py-2 rounded-md font-bold text-blue-700 bg-white hover:bg-blue-50 transition text-base shadow min-h-[36px]"
-          disabled={isLoading || isSuccess}
-          aria-label="Sign up with Google"
-        >
-          <svg width="18" height="18" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <g clipPath="url(#clip0_17_40)">
-              <path d="M47.532 24.5528C47.532 22.9214 47.3997 21.2811 47.1175 19.6768H24.48V28.9181H37.4434C36.9055 31.8988 35.177 34.5356 32.6461 36.2111V42.2078H40.3801C44.9217 38.0278 47.532 31.8547 47.532 24.5528Z" fill="#4285F4"/>
-              <path d="M24.48 48.0016C30.9527 48.0016 36.4116 45.8764 40.3889 42.2078L32.6549 36.2111C30.5031 37.675 27.7252 38.5039 24.4888 38.5039C18.2275 38.5039 12.9187 34.2798 11.0139 28.6006H3.03296V34.7825C7.10718 42.8868 15.4056 48.0016 24.48 48.0016Z" fill="#34A853"/>
-              <path d="M11.0051 28.6006C10.9999 28.3626 10.9999 28.1146 10.9999 27.8666C10.9999 27.6186 10.9999 27.3706 11.0051 27.1326V20.3501H3.03298C2.37068 21.6631 2.00002 23.1154 2.00002 24.6666C2.00002 26.2178 2.37068 27.6701 3.03298 28.9831L11.0051 28.6006Z" fill="#FBBC04"/>
-              <path d="M24.48 10.8833C27.9019 10.8833 30.7923 12.0863 32.7994 14.2665L40.2697 6.80767C36.1361 2.90521 30.5527 0.00146484 24.48 0.00146484C15.4056 0.00146484 7.10718 5.1162 3.03296 13.2206L11.005 19.4026C12.901 13.7233 18.2187 9.49926 24.48 9.49926V10.8833Z" fill="#EA4335"/>
-            </g>
-            <defs>
-              <clipPath id="clip0_17_40">
-                <rect width="48" height="48" fill="white"/>
-              </clipPath>
-            </defs>
-          </svg>
-          Sign up with Google
-        </button>
-        <button
-          type="button"
-          className="w-full flex items-center justify-center gap-2 border-2 border-blue-400 py-2 rounded-md font-bold text-blue-700 bg-white hover:bg-blue-50 transition text-base shadow min-h-[36px]"
-          disabled={isLoading || isSuccess}
-          onClick={onBack}
-          aria-label="Back to Login"
-        >
-          Back to Login
-        </button>
-      </form>
+            <span>Sign up with Google</span>
+          </button>
+
+          {/* Back to Login */}
+          <button
+            type="button"
+            className="w-full text-center py-2 text-gray-600 hover:text-gray-800 transition-colors duration-200 text-sm"
+            onClick={onBack}
+            disabled={isLoading || isSuccess}
+          >
+            Already have an account?{' '}
+            <span className="font-semibold text-blue-600 hover:text-blue-800">Sign in</span>
+          </button>
+        </form>
+      </div>
     </div>
   );
 };
