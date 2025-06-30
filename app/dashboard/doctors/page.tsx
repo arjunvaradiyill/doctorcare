@@ -6,6 +6,7 @@ import { usePathname, useParams } from "next/navigation";
 import api, { Doctor, authAPI } from "../../services/api";
 import TopBar from "@/components/TopBar";
 import PatientSatisfaction from "@/app/components/PatientSatisfaction";
+import LoadingSpinner from "@/app/components/LoadingSpinner";
 
 const summaryCards = [
   { label: "Total Earning", value: "", change: "" },
@@ -607,8 +608,7 @@ export default function DashboardPage() {
             <div className="flex-1">
               {loading ? (
                 <div className="flex items-center justify-center py-12">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-                  <span className="ml-3 text-gray-600">Loading doctors...</span>
+                  <LoadingSpinner text="Loading doctors..." />
                 </div>
               ) : error ? (
                 <div className="flex items-center justify-center py-12">

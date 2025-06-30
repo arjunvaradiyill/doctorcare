@@ -12,6 +12,7 @@ import api, {
 } from "@/app/services/api";
 import { useRouter } from "next/navigation";
 import TopBar from "@/components/TopBar";
+import LoadingSpinner from "@/app/components/LoadingSpinner";
 
 const statusColors = {
   completed: "bg-green-100 text-green-700",
@@ -130,7 +131,7 @@ export default function DashboardPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        Loading...
+        <LoadingSpinner text="Loading dashboard..."/>
       </div>
     );
   }

@@ -4,23 +4,10 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'placehold.co',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'randomuser.me',
-        port: '',
-        pathname: '/api/portraits/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'i.pinimg.com',
-        port: '',
-        pathname: '/**',
+        hostname: 'images.unsplash.com',
       },
     ],
+    domains: ["randomuser.me", "i.pinimg.com"],
   },
 }
 

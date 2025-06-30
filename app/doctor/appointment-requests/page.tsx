@@ -1,7 +1,8 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import DoctorLayout from "@/app/components/DoctorLayout";
+import LoadingSpinner from "@/app/components/LoadingSpinner";
 
 interface AppointmentRequest {
   id: number;
@@ -92,7 +93,7 @@ const initialAppointmentRequests: AppointmentRequest[] = [
 ];
 
 export default function AppointmentRequestsPage() {
-  const [appointmentRequests, setAppointmentRequests] = useState<AppointmentRequest[]>(initialAppointmentRequests);
+  const [appointmentRequests, setAppointmentRequests] = useState<AppointmentRequest[]>([]);
   const [statusFilter, setStatusFilter] = useState("All");
   const [dateFilter, setDateFilter] = useState("All");
   const [genderFilter, setGenderFilter] = useState("All");
@@ -103,6 +104,15 @@ export default function AppointmentRequestsPage() {
   const [showRescheduleModal, setShowRescheduleModal] = useState(false);
   const [newDate, setNewDate] = useState("");
   const [newTime, setNewTime] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading data
+    setTimeout(() => {
+      setAppointmentRequests(initialAppointmentRequests);
+      setLoading(false);
+    }, 1500);
+  }, []);
 
   const handleConfirmAppointment = (request: AppointmentRequest) => {
     setSelectedRequest(request);
@@ -165,117 +175,125 @@ export default function AppointmentRequestsPage() {
       title="Appointment Requests"
       subtitle="View and manage appointment requests"
     >
-      <div className="bg-white rounded-2xl p-6 shadow-sm">
-        {/* Filters */}
-        <div className="flex flex-wrap gap-4 mb-6">
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-sm text-gray-900 focus:ring-blue-300 focus:border-blue-300"
-          >
-            <option value="All" className="text-gray-900">All Status</option>
-            <option value="Pending" className="text-gray-900">Pending</option>
-            <option value="Confirmed" className="text-gray-900">Confirmed</option>
-          </select>
-          <select
-            value={dateFilter}
-            onChange={(e) => setDateFilter(e.target.value)}
-            className="bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-sm text-gray-900 focus:ring-blue-300 focus:border-blue-300"
-          >
-            <option value="All" className="text-gray-900">All Dates</option>
-            <option value="2024-01-26" className="text-gray-900">January 26, 2024</option>
-            <option value="2024-01-27" className="text-gray-900">January 27, 2024</option>
-            <option value="2024-01-28" className="text-gray-900">January 28, 2024</option>
-            <option value="2024-01-29" className="text-gray-900">January 29, 2024</option>
-            <option value="2024-01-30" className="text-gray-900">January 30, 2024</option>
-          </select>
-          <select
-            value={genderFilter}
-            onChange={(e) => setGenderFilter(e.target.value)}
-            className="bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-sm text-gray-900 focus:ring-blue-300 focus:border-blue-300"
-          >
-            <option value="All" className="text-gray-900">All Gender</option>
-            <option value="Male" className="text-gray-900">Male</option>
-            <option value="Female" className="text-gray-900">Female</option>
-          </select>
-          <input
-            type="text"
-            placeholder="Search by name or reason..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-sm text-gray-900 placeholder-gray-500 focus:ring-blue-300 focus:border-blue-300 flex-1 min-w-[200px]"
-          />
-        </div>
+      <div className="bg-white rounded-2xl p-6 shadow-sm min-h-[300px]">
+        {loading ? (
+          <div className="flex justify-center items-center h-full min-h-[300px]">
+            <LoadingSpinner />
+          </div>
+        ) : (
+          <>
+            {/* Filters */}
+            <div className="flex flex-wrap gap-4 mb-6">
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-sm text-gray-900 focus:ring-blue-300 focus:border-blue-300"
+              >
+                <option value="All" className="text-gray-900">All Status</option>
+                <option value="Pending" className="text-gray-900">Pending</option>
+                <option value="Confirmed" className="text-gray-900">Confirmed</option>
+              </select>
+              <select
+                value={dateFilter}
+                onChange={(e) => setDateFilter(e.target.value)}
+                className="bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-sm text-gray-900 focus:ring-blue-300 focus:border-blue-300"
+              >
+                <option value="All" className="text-gray-900">All Dates</option>
+                <option value="2024-01-26" className="text-gray-900">January 26, 2024</option>
+                <option value="2024-01-27" className="text-gray-900">January 27, 2024</option>
+                <option value="2024-01-28" className="text-gray-900">January 28, 2024</option>
+                <option value="2024-01-29" className="text-gray-900">January 29, 2024</option>
+                <option value="2024-01-30" className="text-gray-900">January 30, 2024</option>
+              </select>
+              <select
+                value={genderFilter}
+                onChange={(e) => setGenderFilter(e.target.value)}
+                className="bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-sm text-gray-900 focus:ring-blue-300 focus:border-blue-300"
+              >
+                <option value="All" className="text-gray-900">All Gender</option>
+                <option value="Male" className="text-gray-900">Male</option>
+                <option value="Female" className="text-gray-900">Female</option>
+              </select>
+              <input
+                type="text"
+                placeholder="Search by name or reason..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-sm text-gray-900 placeholder-gray-500 focus:ring-blue-300 focus:border-blue-300 flex-1 min-w-[200px]"
+              />
+            </div>
 
-        {/* Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full text-left">
-            <thead>
-              <tr className="text-gray-400 text-xs uppercase border-b border-gray-100">
-                <th className="py-3 px-4">Patient</th>
-                <th className="py-3 px-4">Gender</th>
-                <th className="py-3 px-4">Age</th>
-                <th className="py-3 px-4">Time</th>
-                <th className="py-3 px-4">Date</th>
-                <th className="py-3 px-4">Status</th>
-                <th className="py-3 px-4">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredAppointments.map((appointment) => (
-                <tr key={appointment.id} className="border-b border-gray-50 hover:bg-gray-50">
-                  <td className="py-3 px-4">
-                    <div className="flex items-center gap-2">
-                      <img src={`https://randomuser.me/api/portraits/men/${appointment.id + 30}.jpg`} alt={appointment.name} className="w-8 h-8 rounded-full object-cover" />
-                      <div>
-                        <div className="font-medium text-gray-900">{appointment.name}</div>
-                        <div className="text-xs text-gray-600">{appointment.contact}</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="py-3 px-4 text-gray-600">{appointment.gender}</td>
-                  <td className="py-3 px-4 text-gray-600">{appointment.age}</td>
-                  <td className="py-3 px-4 text-gray-600">{appointment.time}</td>
-                  <td className="py-3 px-4 text-gray-600">{appointment.date}</td>
-                  <td className="py-3 px-4">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      appointment.status === "Confirmed" ? "bg-green-100 text-green-600" :
-                      "bg-yellow-100 text-yellow-600"
-                    }`}>
-                      {appointment.status}
-                    </span>
-                  </td>
-                  <td className="py-3 px-4">
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => handleViewDetails(appointment)}
-                        className="text-blue-600 hover:text-blue-700 font-medium text-sm"
-                      >
-                        View
-                      </button>
-                      {appointment.status === "Pending" && (
-                        <button
-                          onClick={() => handleConfirmAppointment(appointment)}
-                          className="text-green-600 hover:text-green-700 font-medium text-sm"
-                        >
-                          Confirm
-                        </button>
-                      )}
-                      {appointment.status === "Confirmed" && (
-                        <button
-                          onClick={() => handleReschedule(appointment)}
-                          className="text-purple-600 hover:text-purple-700 font-medium text-sm"
-                        >
-                          Reschedule
-                        </button>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            {/* Table */}
+            <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="text-gray-400 text-xs uppercase border-b border-gray-100">
+                    <th className="py-3 px-4">Patient</th>
+                    <th className="py-3 px-4">Gender</th>
+                    <th className="py-3 px-4">Age</th>
+                    <th className="py-3 px-4">Time</th>
+                    <th className="py-3 px-4">Date</th>
+                    <th className="py-3 px-4">Status</th>
+                    <th className="py-3 px-4">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredAppointments.map((appointment) => (
+                    <tr key={appointment.id} className="border-b border-gray-50 hover:bg-gray-50">
+                      <td className="py-3 px-4">
+                        <div className="flex items-center gap-2">
+                          <img src={`https://randomuser.me/api/portraits/men/${appointment.id + 30}.jpg`} alt={appointment.name} className="w-8 h-8 rounded-full object-cover" />
+                          <div>
+                            <div className="font-medium text-gray-900">{appointment.name}</div>
+                            <div className="text-xs text-gray-600">{appointment.contact}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="py-3 px-4 text-gray-600">{appointment.gender}</td>
+                      <td className="py-3 px-4 text-gray-600">{appointment.age}</td>
+                      <td className="py-3 px-4 text-gray-600">{appointment.time}</td>
+                      <td className="py-3 px-4 text-gray-600">{appointment.date}</td>
+                      <td className="py-3 px-4">
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          appointment.status === "Confirmed" ? "bg-green-100 text-green-600" :
+                          "bg-yellow-100 text-yellow-600"
+                        }`}>
+                          {appointment.status}
+                        </span>
+                      </td>
+                      <td className="py-3 px-4">
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => handleViewDetails(appointment)}
+                            className="text-blue-600 hover:text-blue-700 font-medium text-sm"
+                          >
+                            View
+                          </button>
+                          {appointment.status === "Pending" && (
+                            <button
+                              onClick={() => handleConfirmAppointment(appointment)}
+                              className="text-green-600 hover:text-green-700 font-medium text-sm"
+                            >
+                              Confirm
+                            </button>
+                          )}
+                          {appointment.status === "Confirmed" && (
+                            <button
+                              onClick={() => handleReschedule(appointment)}
+                              className="text-purple-600 hover:text-purple-700 font-medium text-sm"
+                            >
+                              Reschedule
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
       </div>
 
       {/* Confirm Modal */}
@@ -454,7 +472,6 @@ export default function AppointmentRequestsPage() {
                     <option value="10:00 AM">10:00 AM</option>
                     <option value="11:00 AM">11:00 AM</option>
                     <option value="12:00 PM">12:00 PM</option>
-                    
                   </select>
                 </div>
               </div>

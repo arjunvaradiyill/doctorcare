@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { authAPI, User, ProfileData, UpdateProfileData } from "@/app/services/api";
+import LoadingSpinner from "@/app/components/LoadingSpinner";
 
 export default function TopBar({ user, onSidebarToggle, onSearch }: { user?: User | null, onSidebarToggle?: () => void, onSearch?: (value: string) => void }) {
   const [searchTerm, setSearchTerm] = useState("");
@@ -259,284 +260,290 @@ export default function TopBar({ user, onSidebarToggle, onSearch }: { user?: Use
 
       {/* Profile Modal */}
       {showProfileModal && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-y-auto">
-            {/* Modal Header */}
-            <div className="flex items-center justify-between p-6 border-b border-gray-200">
-              <h2 className="text-2xl font-bold text-gray-800">
-                {currentUser?.role === 'admin'
-                  ? 'Admin Profile'
-                  : currentUser?.role === 'doctor'
-                  ? 'Doctor Profile'
-                  : 'Patient Profile'}
-              </h2>
-              <button
-                onClick={() => {
-                  if (isEditMode) {
-                    handleCancel();
-                  } else {
-                    setShowProfileModal(false);
-                  }
-                }}
-                className="text-gray-500 hover:text-gray-700 text-2xl"
-              >
-                ✕
-              </button>
-            </div>
-
-            {/* Modal Content */}
-            <div className="p-6">
-              {isLoading ? (
-                <div className="flex items-center justify-center py-12">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-                  <span className="ml-3 text-gray-600">Loading...</span>
-                </div>
-              ) : profileData ? (
-                <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
-                  {/* Left Column - Profile Image and Stats */}
-                  <div className="xl:col-span-1">
-                    <div className="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl p-6 text-center sticky top-0">
-                      {/* Profile Image */}
-                      <div className="relative inline-block mb-6">
-                        <img
-                          src={profileData.profileImage || "https://randomuser.me/api/portraits/women/44.jpg"}
-                          alt={profileData.fullName}
-                          className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg"
-                        />
-                        {isEditMode && (
-                          <label className="absolute bottom-0 right-0 bg-blue-600 text-white p-2 rounded-full cursor-pointer hover:bg-blue-700 transition-colors">
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                            </svg>
-                            <input
-                              type="file"
-                              accept="image/*"
-                              onChange={handleProfileImageUpload}
-                              className="hidden"
-                            />
-                          </label>
-                        )}
-                      </div>
-
-                      {/* Name and Position/Role */}
-                      <h3 className="text-2xl font-bold text-gray-800 mb-2">{profileData.fullName}</h3>
-                      <p className="text-gray-600 mb-6">
-                        {currentUser?.role === 'admin'
-                          ? 'System Administrator'
-                          : currentUser?.role === 'doctor'
-                          ? 'Doctor'
-                          : 'Patient'}
-                      </p>
-
-                      {/* Stats (show rating only for doctor, hide for admin/patient) */}
-                      <div className="grid grid-cols-3 gap-4 mb-8">
-                        <div className="text-center">
-                          <div className="text-2xl font-bold text-blue-600">{profileData.stats.patients?.toLocaleString?.() ?? '-'}</div>
-                          <div className="text-sm text-gray-600">Patients</div>
-                        </div>
-                        <div className="text-center">
-                          <div className="text-2xl font-bold text-green-600">{profileData.stats.appointments?.toLocaleString?.() ?? '-'}</div>
-                          <div className="text-sm text-gray-600">Appointments</div>
-                        </div>
-                        {currentUser?.role === 'doctor' && (
-                          <div className="text-center">
-                            <div className="text-2xl font-bold text-orange-600">{profileData.stats.rating ?? '-'}</div>
-                            <div className="text-sm text-gray-600">Rating</div>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Action Buttons */}
-                      {!isEditMode ? (
-                        <button
-                          onClick={() => setIsEditMode(true)}
-                          className="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition-colors"
-                        >
-                          Edit Profile
-                        </button>
-                      ) : (
-                        <div className="space-y-3">
-                          <button
-                            onClick={handleSave}
-                            disabled={isLoading}
-                            className="w-full bg-green-600 text-white py-3 rounded-xl font-semibold hover:bg-green-700 transition-colors disabled:opacity-50"
-                          >
-                            {isLoading ? 'Saving...' : 'Save Changes'}
-                          </button>
-                          <button
-                            onClick={handleCancel}
-                            className="w-full bg-gray-300 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-400 transition-colors"
-                          >
-                            Cancel
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Right Column - Profile Details */}
-                  <div className="xl:col-span-2">
-                    <div className="space-y-6">
-                      {/* Personal Information */}
-                      <div className="bg-white rounded-xl border border-gray-200 p-6">
-                        <h4 className="text-lg font-semibold text-gray-800 mb-6 flex items-center">
-                          <svg className="w-5 h-5 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                          </svg>
-                          Personal Information
-                        </h4>
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                          <div className="space-y-2">
-                            <label className="block text-sm font-medium text-gray-700">Full Name</label>
-                            {isEditMode ? (
-                              <input
-                                type="text"
-                                value={profileData.fullName}
-                                onChange={(e) => handleInputChange('fullName', e.target.value)}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                              />
-                            ) : (
-                              <p className="text-gray-900 py-3 px-4 bg-gray-50 rounded-lg">{profileData.fullName}</p>
-                            )}
-                          </div>
-                          <div className="space-y-2">
-                            <label className="block text-sm font-medium text-gray-700">Email</label>
-                            {isEditMode ? (
-                              <input
-                                type="email"
-                                value={profileData.email}
-                                onChange={(e) => handleInputChange('email', e.target.value)}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                              />
-                            ) : (
-                              <p className="text-gray-900 py-3 px-4 bg-gray-50 rounded-lg">{profileData.email}</p>
-                            )}
-                          </div>
-                          <div className="space-y-2">
-                            <label className="block text-sm font-medium text-gray-700">Phone</label>
-                            {isEditMode ? (
-                              <input
-                                type="tel"
-                                value={profileData.phone}
-                                onChange={(e) => handleInputChange('phone', e.target.value)}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                              />
-                            ) : (
-                              <p className="text-gray-900 py-3 px-4 bg-gray-50 rounded-lg">{profileData.phone}</p>
-                            )}
-                          </div>
-                          <div className="space-y-2">
-                            <label className="block text-sm font-medium text-gray-700">Location</label>
-                            {isEditMode ? (
-                              <input
-                                type="text"
-                                value={profileData.location}
-                                onChange={(e) => handleInputChange('location', e.target.value)}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                              />
-                            ) : (
-                              <p className="text-gray-900 py-3 px-4 bg-gray-50 rounded-lg">{profileData.location}</p>
-                            )}
-                          </div>
-                          <div className="space-y-2">
-                            <label className="block text-sm font-medium text-gray-700">Date of Birth</label>
-                            {isEditMode ? (
-                              <input
-                                type="date"
-                                value={profileData.dateOfBirth}
-                                onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                              />
-                            ) : (
-                              <p className="text-gray-900 py-3 px-4 bg-gray-50 rounded-lg">{new Date(profileData.dateOfBirth).toLocaleDateString()}</p>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Professional Information (only for admin/doctor) */}
-                      {(currentUser?.role === 'admin' || currentUser?.role === 'doctor') && (
-                        <div className="bg-white rounded-xl border border-gray-200 p-6">
-                          <h4 className="text-lg font-semibold text-gray-800 mb-6 flex items-center">
-                            <svg className="w-5 h-5 mr-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6a2 2 0 01-2 2H8a2 2 0 01-2-2V8a2 2 0 012-2V6" />
-                            </svg>
-                            Professional Information
-                          </h4>
-                          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <div className="space-y-2">
-                              <label className="block text-sm font-medium text-gray-700">Department</label>
-                              {isEditMode ? (
-                                <input
-                                  type="text"
-                                  value={profileData.department}
-                                  onChange={(e) => handleInputChange('department', e.target.value)}
-                                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                />
-                              ) : (
-                                <p className="text-gray-900 py-3 px-4 bg-gray-50 rounded-lg">{profileData.department}</p>
-                              )}
-                            </div>
-                            <div className="space-y-2">
-                              <label className="block text-sm font-medium text-gray-700">Position</label>
-                              {isEditMode ? (
-                                <input
-                                  type="text"
-                                  value={profileData.position}
-                                  onChange={(e) => handleInputChange('position', e.target.value)}
-                                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                />
-                              ) : (
-                                <p className="text-gray-900 py-3 px-4 bg-gray-50 rounded-lg">{profileData.position}</p>
-                              )}
-                            </div>
-                            {/* Only show Employee ID and Join Date for admin/doctor */}
-                            {(currentUser?.role === 'admin' || currentUser?.role === 'doctor') && (
-                              <>
-                                <div className="space-y-2">
-                                  <label className="block text-sm font-medium text-gray-700">Employee ID</label>
-                                  <p className="text-gray-900 py-3 px-4 bg-gray-50 rounded-lg">{profileData.employeeId}</p>
-                                </div>
-                                <div className="space-y-2">
-                                  <label className="block text-sm font-medium text-gray-700">Join Date</label>
-                                  <p className="text-gray-900 py-3 px-4 bg-gray-50 rounded-lg">{new Date(profileData.joinDate).toLocaleDateString()}</p>
-                                </div>
-                              </>
-                            )}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Permissions (only for admin/doctor) */}
-                      {(currentUser?.role === 'admin' || currentUser?.role === 'doctor') && (
-                        <div className="bg-white rounded-xl border border-gray-200 p-6">
-                          <h4 className="text-lg font-semibold text-gray-800 mb-6 flex items-center">
-                            <svg className="w-5 h-5 mr-3 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                            </svg>
-                            Permissions
-                          </h4>
-                          <div className="flex flex-wrap gap-3">
-                            {profileData.permissions.map((permission, index) => (
-                              <span
-                                key={index}
-                                className="px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-medium"
-                              >
-                                {permission.charAt(0).toUpperCase() + permission.slice(1)}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ) : (
+        <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col">
+            {isLoading ? (
+              <div className="flex-1 flex flex-col items-center justify-center">
+                <LoadingSpinner text="Loading profile..."/>
+              </div>
+            ) : !profileData ? (
+              <div className="flex-1 flex flex-col items-center justify-center">
                 <div className="text-center py-12 text-gray-500">
                   Failed to load profile data
                 </div>
-              )}
-            </div>
+              </div>
+            ) : (
+              <div className="p-6">
+                <div className="flex items-center justify-between p-6 border-b border-gray-200">
+                  <h2 className="text-2xl font-bold text-gray-800">
+                    {currentUser?.role === 'admin'
+                      ? 'Admin Profile'
+                      : currentUser?.role === 'doctor'
+                      ? 'Doctor Profile'
+                      : 'Patient Profile'}
+                  </h2>
+                  <button
+                    onClick={() => {
+                      if (isEditMode) {
+                        handleCancel();
+                      } else {
+                        setShowProfileModal(false);
+                      }
+                    }}
+                    className="text-gray-500 hover:text-gray-700 text-2xl"
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                <div className="p-6">
+                  <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+                    {/* Left Column - Profile Image and Stats */}
+                    <div className="xl:col-span-1">
+                      <div className="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl p-6 text-center sticky top-0">
+                        {/* Profile Image */}
+                        <div className="relative inline-block mb-6">
+                          <img
+                            src={profileData.profileImage || "https://randomuser.me/api/portraits/women/44.jpg"}
+                            alt={profileData.fullName}
+                            className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg"
+                          />
+                          {isEditMode && (
+                            <label className="absolute bottom-0 right-0 bg-blue-600 text-white p-2 rounded-full cursor-pointer hover:bg-blue-700 transition-colors">
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                              </svg>
+                              <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleProfileImageUpload}
+                                className="hidden"
+                              />
+                            </label>
+                          )}
+                        </div>
+
+                        {/* Name and Position/Role */}
+                        <h3 className="text-2xl font-bold text-gray-800 mb-2">{profileData.fullName}</h3>
+                        <p className="text-gray-600 mb-6">
+                          {currentUser?.role === 'admin'
+                            ? 'System Administrator'
+                            : currentUser?.role === 'doctor'
+                            ? 'Doctor'
+                            : 'Patient'}
+                        </p>
+
+                        {/* Stats (show rating only for doctor, hide for admin/patient) */}
+                        <div className="grid grid-cols-3 gap-4 mb-8">
+                          <div className="text-center">
+                            <div className="text-2xl font-bold text-blue-600">{profileData.stats.patients?.toLocaleString?.() ?? '-'}</div>
+                            <div className="text-sm text-gray-600">Patients</div>
+                          </div>
+                          <div className="text-center">
+                            <div className="text-2xl font-bold text-green-600">{profileData.stats.appointments?.toLocaleString?.() ?? '-'}</div>
+                            <div className="text-sm text-gray-600">Appointments</div>
+                          </div>
+                          {currentUser?.role === 'doctor' && (
+                            <div className="text-center">
+                              <div className="text-2xl font-bold text-orange-600">{profileData.stats.rating ?? '-'}</div>
+                              <div className="text-sm text-gray-600">Rating</div>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Action Buttons */}
+                        {!isEditMode ? (
+                          <button
+                            onClick={() => setIsEditMode(true)}
+                            className="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition-colors"
+                          >
+                            Edit Profile
+                          </button>
+                        ) : (
+                          <div className="space-y-3">
+                            <button
+                              onClick={handleSave}
+                              className="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition-colors"
+                            >
+                              Save Changes
+                            </button>
+                            <button
+                              onClick={handleCancel}
+                              className="w-full bg-gray-300 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-400 transition-colors"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Right Column - Profile Details */}
+                    <div className="xl:col-span-2">
+                      <div className="space-y-6">
+                        {/* Personal Information */}
+                        <div className="bg-white rounded-xl border border-gray-200 p-6">
+                          <h4 className="text-lg font-semibold text-gray-800 mb-6 flex items-center">
+                            <svg className="w-5 h-5 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                            Personal Information
+                          </h4>
+                          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                              <label className="block text-sm font-medium text-gray-700">Full Name</label>
+                              {isEditMode ? (
+                                <input
+                                  type="text"
+                                  value={profileData.fullName}
+                                  onChange={(e) => handleInputChange('fullName', e.target.value)}
+                                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                />
+                              ) : (
+                                <p className="text-gray-900 py-3 px-4 bg-gray-50 rounded-lg">{profileData.fullName}</p>
+                              )}
+                            </div>
+                            <div className="space-y-2">
+                              <label className="block text-sm font-medium text-gray-700">Email</label>
+                              {isEditMode ? (
+                                <input
+                                  type="email"
+                                  value={profileData.email}
+                                  onChange={(e) => handleInputChange('email', e.target.value)}
+                                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                />
+                              ) : (
+                                <p className="text-gray-900 py-3 px-4 bg-gray-50 rounded-lg">{profileData.email}</p>
+                              )}
+                            </div>
+                            <div className="space-y-2">
+                              <label className="block text-sm font-medium text-gray-700">Phone</label>
+                              {isEditMode ? (
+                                <input
+                                  type="tel"
+                                  value={profileData.phone}
+                                  onChange={(e) => handleInputChange('phone', e.target.value)}
+                                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                />
+                              ) : (
+                                <p className="text-gray-900 py-3 px-4 bg-gray-50 rounded-lg">{profileData.phone}</p>
+                              )}
+                            </div>
+                            <div className="space-y-2">
+                              <label className="block text-sm font-medium text-gray-700">Location</label>
+                              {isEditMode ? (
+                                <input
+                                  type="text"
+                                  value={profileData.location}
+                                  onChange={(e) => handleInputChange('location', e.target.value)}
+                                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                />
+                              ) : (
+                                <p className="text-gray-900 py-3 px-4 bg-gray-50 rounded-lg">{profileData.location}</p>
+                              )}
+                            </div>
+                            <div className="space-y-2">
+                              <label className="block text-sm font-medium text-gray-700">Date of Birth</label>
+                              {isEditMode ? (
+                                <input
+                                  type="date"
+                                  value={profileData.dateOfBirth}
+                                  onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
+                                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                />
+                              ) : (
+                                <p className="text-gray-900 py-3 px-4 bg-gray-50 rounded-lg">{new Date(profileData.dateOfBirth).toLocaleDateString()}</p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Professional Information (only for admin/doctor) */}
+                        {(currentUser?.role === 'admin' || currentUser?.role === 'doctor') && (
+                          <div className="bg-white rounded-xl border border-gray-200 p-6">
+                            <h4 className="text-lg font-semibold text-gray-800 mb-6 flex items-center">
+                              <svg className="w-5 h-5 mr-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6a2 2 0 01-2 2H8a2 2 0 01-2-2V8a2 2 0 012-2V6" />
+                              </svg>
+                              Professional Information
+                            </h4>
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                              <div className="space-y-2">
+                                <label className="block text-sm font-medium text-gray-700">Department</label>
+                                {isEditMode ? (
+                                  <input
+                                    type="text"
+                                    value={profileData.department}
+                                    onChange={(e) => handleInputChange('department', e.target.value)}
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                  />
+                                ) : (
+                                  <p className="text-gray-900 py-3 px-4 bg-gray-50 rounded-lg">{profileData.department}</p>
+                                )}
+                              </div>
+                              <div className="space-y-2">
+                                <label className="block text-sm font-medium text-gray-700">Position</label>
+                                {isEditMode ? (
+                                  <input
+                                    type="text"
+                                    value={profileData.position}
+                                    onChange={(e) => handleInputChange('position', e.target.value)}
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                  />
+                                ) : (
+                                  <p className="text-gray-900 py-3 px-4 bg-gray-50 rounded-lg">{profileData.position}</p>
+                                )}
+                              </div>
+                              {/* Only show Employee ID and Join Date for admin/doctor */}
+                              {(currentUser?.role === 'admin' || currentUser?.role === 'doctor') && (
+                                <>
+                                  <div className="space-y-2">
+                                    <label className="block text-sm font-medium text-gray-700">Employee ID</label>
+                                    <p className="text-gray-900 py-3 px-4 bg-gray-50 rounded-lg">{profileData.employeeId}</p>
+                                  </div>
+                                  <div className="space-y-2">
+                                    <label className="block text-sm font-medium text-gray-700">Join Date</label>
+                                    <p className="text-gray-900 py-3 px-4 bg-gray-50 rounded-lg">{new Date(profileData.joinDate).toLocaleDateString()}</p>
+                                  </div>
+                                </>
+                              )}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Permissions (only for admin/doctor) */}
+                        {(currentUser?.role === 'admin' || currentUser?.role === 'doctor') && (
+                          <div className="bg-white rounded-xl border border-gray-200 p-6">
+                            <h4 className="text-lg font-semibold text-gray-800 mb-6 flex items-center">
+                              <svg className="w-5 h-5 mr-3 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                              </svg>
+                              Permissions
+                            </h4>
+                            <div className="flex flex-wrap gap-3">
+                              {profileData.permissions.map((permission, index) => (
+                                <span
+                                  key={index}
+                                  className="px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-medium"
+                                >
+                                  {permission.charAt(0).toUpperCase() + permission.slice(1)}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-6 pt-4 border-t border-gray-200 flex justify-end gap-3">
+                  <button onClick={handleCancel} className="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors">Cancel</button>
+                  <button onClick={handleSave} className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors flex items-center" disabled={isLoading}>
+                    {isLoading ? <LoadingSpinner size="h-5 w-5" /> : 'Save Changes'}
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}

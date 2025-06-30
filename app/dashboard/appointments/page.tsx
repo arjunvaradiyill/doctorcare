@@ -3,6 +3,7 @@ import Link from "next/link";
 import React, { useState, useEffect } from "react";
 import api, { Appointment, authAPI } from "@/app/services/api";
 import TopBar from "@/components/TopBar";
+import LoadingSpinner from "@/app/components/LoadingSpinner";
 
 const statusColors: { [key: string]: string } = {
   completed: "bg-green-100 text-green-700",
@@ -121,10 +122,7 @@ export default function AppointmentsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading appointments...</p>
-        </div>
+        <LoadingSpinner text="Loading appointments..." />
       </div>
     );
   }

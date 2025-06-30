@@ -4,6 +4,7 @@ import Link from "next/link";
 import { authAPI } from '@/app/services/api';
 import TopBar from '@/components/TopBar';
 import DoctorSidebar from '@/app/doctor/components/DoctorSidebar';
+import LoadingSpinner from "@/app/components/LoadingSpinner";
 
 export default function Appointment() {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -16,11 +17,16 @@ export default function Appointment() {
   const [showPatientModal, setShowPatientModal] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState<any>(null);
   const [currentUser, setCurrentUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Get current user information
     const user = authAPI.getCurrentUser();
     setCurrentUser(user);
+    // Simulate loading
+    setTimeout(() => {
+      setLoading(false);
+    }, 1500);
   }, []);
 
   // Add sample data for demonstration
@@ -132,140 +138,148 @@ export default function Appointment() {
         </div>
         {/* Main Content */}
         <div className="bg-white rounded-2xl p-8 shadow min-h-[300px]">
-          {/* Recent Appointments */}
-          <div className="mb-8">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-gray-900">Recent Appointments</h2>
-              <select
-                className="border border-gray-200 rounded-lg px-3 py-1 text-sm text-gray-700 focus:ring-2 focus:ring-[#7b6ffb] focus:border-[#7b6ffb]"
-                value={recentStatusFilter}
-                onChange={e => setRecentStatusFilter(e.target.value)}
-              >
-                {statusOptionsRecent.map(opt => (
-                  <option key={`recent-${opt}`} value={opt}>{opt}</option>
-                ))}
-              </select>
+          {loading ? (
+            <div className="flex justify-center items-center h-full min-h-[300px]">
+              <LoadingSpinner />
             </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
-                <thead>
-                  <tr className="text-gray-400 text-xs uppercase border-b border-gray-100">
-                    <th className="py-2 px-1">Patient</th>
-                    <th className="py-2 px-1">Visit Id</th>
-                    <th className="py-2 px-1">Date</th>
-                    <th className="py-2 px-1">Gender</th>
-                    <th className="py-2 px-1">Diseases</th>
-                    <th className="py-2 px-1">Status</th>
-                    <th className="py-2 px-1">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {searchFilteredRecentAppointments.map((a, i) => (
-                    <tr key={`recent-${a.visitId}`} className="border-t border-gray-50 hover:bg-gray-50">
-                      <td className="py-2 px-1 flex items-center gap-2">
-                        <img src={`https://randomuser.me/api/portraits/men/${i+30}.jpg`} alt={a.name} className="w-6 h-6 rounded-full object-cover" />
-                        <span className="text-gray-900 font-medium text-xs">{a.name}</span>
-                      </td>
-                      <td className="py-2 px-1 text-gray-600 text-xs">{a.visitId}</td>
-                      <td className="py-2 px-1 text-gray-600 text-xs">{a.date}</td>
-                      <td className="py-2 px-1 text-gray-600 text-xs">{a.gender}</td>
-                      <td className="py-2 px-1 text-gray-600 text-xs">{a.disease}</td>
-                      <td className="py-2 px-1 text-xs font-medium">
-                        <select
-                          className={`px-2 py-0.5 rounded-full text-xs border focus:ring-2 focus:ring-[#7b6ffb] focus:border-[#7b6ffb] ${a.status === "Out-Patient" ? "bg-blue-100 text-blue-600" : a.status === "Pending" ? "bg-yellow-100 text-yellow-600" : a.status === "In-Patient" ? "bg-green-100 text-green-600" : a.status === "Scheduled" ? "bg-purple-100 text-purple-600" : "bg-gray-100 text-gray-600"}`}
-                          value={a.status}
-                          onChange={e => handleStatusChange('recent', a.visitId, e.target.value)}
-                        >
-                          {statusOptionsRecent.map(opt => (
-                            <option key={`recent-${opt}`} value={opt}>{opt}</option>
-                          ))}
-                        </select>
-                      </td>
-                      <td className="py-2 px-1">
-                        <select
-                          className="px-2 py-1 rounded text-xs border focus:ring-2 focus:ring-[#7b6ffb] focus:border-[#7b6ffb] text-gray-700"
-                          onChange={e => handleAction('recent', a.visitId, e.target.value)}
-                          value=""
-                        >
-                          <option value="" disabled className="text-gray-400">Select Action</option>
-                          {a.status === 'Pending' && <option value="Approve">Approve</option>}
-                          {a.status === 'Pending' && <option value="Decline">Decline</option>}
-                          <option value="View">View</option>
-                        </select>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-          {/* Next Week Appointments */}
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-gray-900">Next Week Appointments</h2>
-              <select
-                className="border border-gray-200 rounded-lg px-3 py-1 text-sm text-gray-700 focus:ring-2 focus:ring-[#7b6ffb] focus:border-[#7b6ffb]"
-                value={nextWeekStatusFilter}
-                onChange={e => setNextWeekStatusFilter(e.target.value)}
-              >
-                {statusOptionsNextWeek.map(opt => (
-                  <option key={`nextweek-${opt}`} value={opt}>{opt}</option>
-                ))}
-              </select>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
-                <thead>
-                  <tr className="text-gray-400 text-xs uppercase border-b border-gray-100">
-                    <th className="py-2 px-1">Patient</th>
-                    <th className="py-2 px-1">Visit Id</th>
-                    <th className="py-2 px-1">Date</th>
-                    <th className="py-2 px-1">Gender</th>
-                    <th className="py-2 px-1">Diseases</th>
-                    <th className="py-2 px-1">Status</th>
-                    <th className="py-2 px-1">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {searchFilteredNextWeekAppointments.map((a, i) => (
-                    <tr key={`nextweek-${a.visitId}`} className="border-t border-gray-50 hover:bg-gray-50">
-                      <td className="py-2 px-1 flex items-center gap-2">
-                        <img src={`https://randomuser.me/api/portraits/men/${i+40}.jpg`} alt={a.name} className="w-6 h-6 rounded-full object-cover" />
-                        <span className="text-gray-900 font-medium text-xs">{a.name}</span>
-                      </td>
-                      <td className="py-2 px-1 text-gray-600 text-xs">{a.visitId}</td>
-                      <td className="py-2 px-1 text-gray-600 text-xs">{a.date}</td>
-                      <td className="py-2 px-1 text-gray-600 text-xs">{a.gender}</td>
-                      <td className="py-2 px-1 text-gray-600 text-xs">{a.disease}</td>
-                      <td className="py-2 px-1 text-xs font-medium">
-                        <select
-                          className={`px-2 py-0.5 rounded-full text-xs border focus:ring-2 focus:ring-[#7b6ffb] focus:border-[#7b6ffb] ${a.status === "Out-Patient" ? "bg-blue-100 text-blue-600" : a.status === "Pending" ? "bg-yellow-100 text-yellow-600" : a.status === "In-Patient" ? "bg-green-100 text-green-600" : a.status === "Scheduled" ? "bg-purple-100 text-purple-600" : "bg-gray-100 text-gray-600"}`}
-                          value={a.status}
-                          onChange={e => handleStatusChange('next', a.visitId, e.target.value)}
-                        >
-                          {statusOptionsNextWeek.map(opt => (
-                            <option key={`nextweek-${opt}`} value={opt}>{opt}</option>
-                          ))}
-                        </select>
-                      </td>
-                      <td className="py-2 px-1">
-                        <select
-                          className="px-2 py-1 rounded text-xs border focus:ring-2 focus:ring-[#7b6ffb] focus:border-[#7b6ffb] text-gray-700"
-                          onChange={e => handleAction('next', a.visitId, e.target.value)}
-                          value=""
-                        >
-                          <option value="" disabled className="text-gray-400">Select Action</option>
-                          {a.status === 'Scheduled' && <option value="Approve">Approve</option>}
-                          {a.status === 'Scheduled' && <option value="Decline">Decline</option>}
-                          <option value="View">View</option>
-                        </select>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+          ) : (
+            <>
+              {/* Recent Appointments */}
+              <div className="mb-8">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-xl font-bold text-gray-900">Recent Appointments</h2>
+                  <select
+                    className="border border-gray-200 rounded-lg px-3 py-1 text-sm text-gray-700 focus:ring-2 focus:ring-[#7b6ffb] focus:border-[#7b6ffb]"
+                    value={recentStatusFilter}
+                    onChange={e => setRecentStatusFilter(e.target.value)}
+                  >
+                    {statusOptionsRecent.map(opt => (
+                      <option key={`recent-${opt}`} value={opt}>{opt}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-sm">
+                    <thead>
+                      <tr className="text-gray-400 text-xs uppercase border-b border-gray-100">
+                        <th className="py-2 px-1">Patient</th>
+                        <th className="py-2 px-1">Visit Id</th>
+                        <th className="py-2 px-1">Date</th>
+                        <th className="py-2 px-1">Gender</th>
+                        <th className="py-2 px-1">Diseases</th>
+                        <th className="py-2 px-1">Status</th>
+                        <th className="py-2 px-1">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {searchFilteredRecentAppointments.map((a, i) => (
+                        <tr key={`recent-${a.visitId}`} className="border-t border-gray-50 hover:bg-gray-50">
+                          <td className="py-2 px-1 flex items-center gap-2">
+                            <img src={`https://randomuser.me/api/portraits/men/${i+30}.jpg`} alt={a.name} className="w-6 h-6 rounded-full object-cover" />
+                            <span className="text-gray-900 font-medium text-xs">{a.name}</span>
+                          </td>
+                          <td className="py-2 px-1 text-gray-600 text-xs">{a.visitId}</td>
+                          <td className="py-2 px-1 text-gray-600 text-xs">{a.date}</td>
+                          <td className="py-2 px-1 text-gray-600 text-xs">{a.gender}</td>
+                          <td className="py-2 px-1 text-gray-600 text-xs">{a.disease}</td>
+                          <td className="py-2 px-1 text-xs font-medium">
+                            <select
+                              className={`px-2 py-0.5 rounded-full text-xs border focus:ring-2 focus:ring-[#7b6ffb] focus:border-[#7b6ffb] ${a.status === "Out-Patient" ? "bg-blue-100 text-blue-600" : a.status === "Pending" ? "bg-yellow-100 text-yellow-600" : a.status === "In-Patient" ? "bg-green-100 text-green-600" : a.status === "Scheduled" ? "bg-purple-100 text-purple-600" : "bg-gray-100 text-gray-600"}`}
+                              value={a.status}
+                              onChange={e => handleStatusChange('recent', a.visitId, e.target.value)}
+                            >
+                              {statusOptionsRecent.map(opt => (
+                                <option key={`recent-${opt}`} value={opt}>{opt}</option>
+                              ))}
+                            </select>
+                          </td>
+                          <td className="py-2 px-1">
+                            <select
+                              className="px-2 py-1 rounded text-xs border focus:ring-2 focus:ring-[#7b6ffb] focus:border-[#7b6ffb] text-gray-700"
+                              onChange={e => handleAction('recent', a.visitId, e.target.value)}
+                              value=""
+                            >
+                              <option value="" disabled className="text-gray-400">Select Action</option>
+                              {a.status === 'Pending' && <option value="Approve">Approve</option>}
+                              {a.status === 'Pending' && <option value="Decline">Decline</option>}
+                              <option value="View">View</option>
+                            </select>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              {/* Next Week Appointments */}
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-xl font-bold text-gray-900">Next Week Appointments</h2>
+                  <select
+                    className="border border-gray-200 rounded-lg px-3 py-1 text-sm text-gray-700 focus:ring-2 focus:ring-[#7b6ffb] focus:border-[#7b6ffb]"
+                    value={nextWeekStatusFilter}
+                    onChange={e => setNextWeekStatusFilter(e.target.value)}
+                  >
+                    {statusOptionsNextWeek.map(opt => (
+                      <option key={`nextweek-${opt}`} value={opt}>{opt}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-sm">
+                    <thead>
+                      <tr className="text-gray-400 text-xs uppercase border-b border-gray-100">
+                        <th className="py-2 px-1">Patient</th>
+                        <th className="py-2 px-1">Visit Id</th>
+                        <th className="py-2 px-1">Date</th>
+                        <th className="py-2 px-1">Gender</th>
+                        <th className="py-2 px-1">Diseases</th>
+                        <th className="py-2 px-1">Status</th>
+                        <th className="py-2 px-1">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {searchFilteredNextWeekAppointments.map((a, i) => (
+                        <tr key={`nextweek-${a.visitId}`} className="border-t border-gray-50 hover:bg-gray-50">
+                          <td className="py-2 px-1 flex items-center gap-2">
+                            <img src={`https://randomuser.me/api/portraits/men/${i+40}.jpg`} alt={a.name} className="w-6 h-6 rounded-full object-cover" />
+                            <span className="text-gray-900 font-medium text-xs">{a.name}</span>
+                          </td>
+                          <td className="py-2 px-1 text-gray-600 text-xs">{a.visitId}</td>
+                          <td className="py-2 px-1 text-gray-600 text-xs">{a.date}</td>
+                          <td className="py-2 px-1 text-gray-600 text-xs">{a.gender}</td>
+                          <td className="py-2 px-1 text-gray-600 text-xs">{a.disease}</td>
+                          <td className="py-2 px-1 text-xs font-medium">
+                            <select
+                              className={`px-2 py-0.5 rounded-full text-xs border focus:ring-2 focus:ring-[#7b6ffb] focus:border-[#7b6ffb] ${a.status === "Out-Patient" ? "bg-blue-100 text-blue-600" : a.status === "Pending" ? "bg-yellow-100 text-yellow-600" : a.status === "In-Patient" ? "bg-green-100 text-green-600" : a.status === "Scheduled" ? "bg-purple-100 text-purple-600" : "bg-gray-100 text-gray-600"}`}
+                              value={a.status}
+                              onChange={e => handleStatusChange('next', a.visitId, e.target.value)}
+                            >
+                              {statusOptionsNextWeek.map(opt => (
+                                <option key={`nextweek-${opt}`} value={opt}>{opt}</option>
+                              ))}
+                            </select>
+                          </td>
+                          <td className="py-2 px-1">
+                            <select
+                              className="px-2 py-1 rounded text-xs border focus:ring-2 focus:ring-[#7b6ffb] focus:border-[#7b6ffb] text-gray-700"
+                              onChange={e => handleAction('next', a.visitId, e.target.value)}
+                              value=""
+                            >
+                              <option value="" disabled className="text-gray-400">Select Action</option>
+                              {a.status === 'Scheduled' && <option value="Approve">Approve</option>}
+                              {a.status === 'Scheduled' && <option value="Decline">Decline</option>}
+                              <option value="View">View</option>
+                            </select>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </main>
       {/* Profile Modal */}

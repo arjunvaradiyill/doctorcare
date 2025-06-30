@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import api, { Appointment, Doctor, Patient, authAPI, User } from '@/app/services/api';
 import TopBar from '@/components/TopBar';
+import LoadingSpinner from '@/app/components/LoadingSpinner';
 
 const TABS = ["Dashboard", "Profile", "Doctors", "Booking History", "Document"];
 const FINDINGS_TABS = ["Doctor Findings", "Doctor Suggestions", "Medicine"];
@@ -260,7 +261,9 @@ function DoctorsTab() {
       {/* Doctor Cards Grid */}
       <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full min-w-0 px-2 md:px-6">
         {loading ? (
-          <div className="col-span-full text-center text-black py-12">Loading...</div>
+          <div className="col-span-full text-center text-black py-12">
+            <LoadingSpinner text="Loading doctors..." />
+          </div>
         ) : error ? (
           <div className="col-span-full text-center text-red-500 py-12">{error}</div>
         ) : filteredDoctors.length > 0 ? (

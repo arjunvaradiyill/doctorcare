@@ -1,12 +1,13 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Calendar from 'react-calendar';
 import type { Value } from 'react-calendar/dist/cjs/shared/types';
 import 'react-calendar/dist/Calendar.css';
 import DoctorLayout from "@/app/components/DoctorLayout";
+import LoadingSpinner from "@/app/components/LoadingSpinner";
 
-const todaysAppointments = [
+const todaysAppointmentsData = [
   { id: 1, name: "Alice Johnson", clinic: "Clinic Consulting", time: "12:30", duration: "30 min", status: "Ongoing", reason: "Blood pressure monitoring", notes: "Patient requested follow-up", contact: "+1-555-0001" },
   { id: 2, name: "John Doe", clinic: "Clinic Consulting", time: "14:00", duration: "45 min", status: "Waiting", reason: "Diabetes follow-up", notes: "Patient requested follow-up", contact: "+1-555-0123" },
   { id: 3, name: "Jane Smith", clinic: "Clinic Consulting", time: "15:30", duration: "30 min", status: "Scheduled", reason: "Asthma check-up", notes: "Patient requested follow-up", contact: "+1-555-0124" },
@@ -25,10 +26,19 @@ const recentPatientAppointments = [
 ];
 
 export default function TodaysAppointmentsPage() {
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState<Value>(new Date());
   const [selectedAppointment, setSelectedAppointment] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [appointments, setAppointments] = useState(todaysAppointments);
+  const [appointments, setAppointments] = useState(todaysAppointmentsData);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading data
+    setTimeout(() => {
+      setAppointments(todaysAppointmentsData);
+      setLoading(false);
+    }, 1500);
+  }, []);
 
   // Handle search functionality
   const handleSearch = (value: string) => {
@@ -78,6 +88,11 @@ export default function TodaysAppointmentsPage() {
       subtitle="View and manage your appointments for today"
       onSearch={handleSearch}
     >
+      {loading ? (
+        <div className="flex justify-center items-center h-full min-h-[500px]">
+          <LoadingSpinner />
+        </div>
+        ) : (
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Calendar */}
         <div className="lg:col-span-1">
@@ -166,9 +181,12 @@ export default function TodaysAppointmentsPage() {
               maxDetail="month"
               showNeighboringMonth={false}
               tileContent={({ date: tileDate }) => {
-                const hasAppointment = todaysAppointments.some(app => 
-                  new Date(app.time).toDateString() === tileDate.toDateString()
-                );
+                const hasAppointment = todaysAppointmentsData.some(app => {
+                  const appointmentDate = new Date();
+                  const [hours, minutes] = app.time.split(':');
+                  appointmentDate.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0, 0);
+                  return appointmentDate.toDateString() === tileDate.toDateString();
+                });
                 return hasAppointment ? (
                   <div className="w-1 h-1 bg-[#7b6ffb] rounded-full mx-auto mt-1 opacity-75" />
                 ) : null;
@@ -247,6 +265,7 @@ export default function TodaysAppointmentsPage() {
           </div>
         </div>
       </div>
+      )}
 
       {/* Next Week Section */}
       <div className="mt-8">

@@ -1,474 +1,775 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
-import api, { Patient } from '@/app/services/api';
-import { authAPI, ProfileData } from '@/app/services/api';
-import Image from "next/image";
-import Link from "next/link";
-
-const TABS = ["Dashboard", "Profile", "Booking History", "Document"];
-
-const ProfileForm = () => {
-  const [form, setForm] = useState({
-    fullName: "",
-    gender: "",
-    dob: "",
-    adhar: "",
-    nationalId: "",
-    bloodGroup: "",
-    phone1: "",
-    phone2: "",
-    job: "",
-    father: "",
-    mother: "",
-    spouse: "",
-    country: "",
-    state: "",
-    district: "",
-    pin: "",
-    address: ""
-  });
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    alert("Profile saved! (placeholder)");
-  };
-  return (
-    <div className="flex justify-center items-start bg-[#f7f8fa] pt-4 pb-16 w-full">
-      <form onSubmit={handleSubmit} className="w-full p-0">
-        {/* ...profile form fields as before... */}
-        {/* For brevity, you can copy the form fields from the dashboard page */}
-        <h2 className="text-xl font-extrabold mb-4 text-gray-900 text-left">Personal Details</h2>
-        {/* ...rest of the form... */}
-      </form>
-    </div>
-  );
-};
-
-const BookingHistoryTab = () => {
-  // ...copy the BookingHistoryTab logic from dashboard page...
-  // For brevity, you can copy the code from the dashboard page
-  return (
-    <div className="w-full">
-      {/* ...booking history table and filters... */}
-    </div>
-  );
-};
+import { authAPI } from '@/app/services/api';
+import { useRouter } from 'next/navigation';
 
 export default function MedicalRecordsPage() {
-  const params = useParams();
-  const [activeTab, setActiveTab] = useState("Document");
-  const [patient, setPatient] = useState<Patient | null>(null);
-  const [loggedInUser, setLoggedInUser] = useState<{ username: string } | null>(null);
-  const [userProfile, setUserProfile] = useState<ProfileData | null>(null);
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [activeTab, setActiveTab] = useState('overview');
+  const router = useRouter();
 
-  useEffect(() => {
-    async function fetchPatient() {
-      if (typeof params.id === 'string') {
-        const data = await api.getPatientById(params.id);
-        setPatient(data);
+  const handleLogout = () => {
+    authAPI.logout();
+  };
+  const [patientData, setPatientData] = useState({
+    // Patient Admission Details
+    admissionDetails: {
+      patientId: "IP-2024-001",
+      admissionDate: "2024-01-15",
+      department: "Cardiology",
+      consultingDoctor: "Dr. Sarah Wilson",
+      roomNumber: "C-205",
+      wardNumber: "Cardiac Care Unit",
+      reasonForAdmission: "Acute myocardial infarction with chest pain and shortness of breath",
+      admissionType: "Emergency"
+    },
+    
+    // Patient Personal Information
+    personalInfo: {
+      fullName: "John Michael Anderson",
+      gender: "Male",
+      age: 58,
+      dateOfBirth: "1966-03-15",
+      bloodGroup: "O+",
+      contactNumber: "+1 (555) 123-4567",
+      emergencyContact: {
+        name: "Mary Anderson",
+        relationship: "Spouse",
+        phone: "+1 (555) 987-6543"
+      },
+      address: "123 Oak Street, Springfield, IL 62701"
+    },
+    
+    // Medical History
+    medicalHistory: {
+      chronicConditions: [
+        "Hypertension (diagnosed 2010)",
+        "Type 2 Diabetes (diagnosed 2015)",
+        "Hyperlipidemia (diagnosed 2018)"
+      ],
+      surgicalHistory: [
+        {
+          procedure: "Appendectomy",
+          date: "1995-06-20",
+          hospital: "Springfield General Hospital"
+        },
+        {
+          procedure: "Cataract Surgery (Right Eye)",
+          date: "2020-03-10",
+          hospital: "Springfield Eye Institute"
+        }
+      ],
+      allergies: [
+        {
+          allergen: "Penicillin",
+          reaction: "Rash and difficulty breathing",
+          severity: "Severe"
+        },
+        {
+          allergen: "Sulfa drugs",
+          reaction: "Nausea and vomiting",
+          severity: "Moderate"
+        }
+      ],
+      familyHistory: [
+        "Father: Heart disease (deceased at 65)",
+        "Mother: Diabetes (alive, age 82)",
+        "Sister: Hypertension (alive, age 55)"
+      ]
+    },
+    
+    // Current Medications
+    currentMedications: [
+      {
+        name: "Metformin",
+        dosage: "500mg",
+        route: "Oral",
+        frequency: "Twice daily",
+        prescribedBy: "Dr. Sarah Wilson",
+        startDate: "2024-01-15"
+      },
+      {
+        name: "Amlodipine",
+        dosage: "5mg",
+        route: "Oral",
+        frequency: "Once daily",
+        prescribedBy: "Dr. Sarah Wilson",
+        startDate: "2024-01-15"
+      },
+      {
+        name: "Aspirin",
+        dosage: "81mg",
+        route: "Oral",
+        frequency: "Once daily",
+        prescribedBy: "Dr. Sarah Wilson",
+        startDate: "2024-01-15"
+      },
+      {
+        name: "Atorvastatin",
+        dosage: "20mg",
+        route: "Oral",
+        frequency: "Once daily",
+        prescribedBy: "Dr. Sarah Wilson",
+        startDate: "2024-01-15"
       }
-    }
-    fetchPatient();
-  }, [params.id]);
+    ],
+    
+    // Vitals Monitoring
+    vitalsMonitoring: [
+      {
+        date: "2024-01-15",
+        time: "08:00",
+        bloodPressure: "160/95",
+        pulse: "88",
+        temperature: "98.6°F",
+        respirationRate: "18",
+        oxygenSaturation: "96%",
+        notes: "Patient admitted with chest pain"
+      },
+      {
+        date: "2024-01-15",
+        time: "12:00",
+        bloodPressure: "155/90",
+        pulse: "82",
+        temperature: "98.4°F",
+        respirationRate: "16",
+        oxygenSaturation: "97%",
+        notes: "Post-medication administration"
+      },
+      {
+        date: "2024-01-15",
+        time: "16:00",
+        bloodPressure: "150/88",
+        pulse: "78",
+        temperature: "98.2°F",
+        respirationRate: "15",
+        oxygenSaturation: "98%",
+        notes: "Stable condition"
+      },
+      {
+        date: "2024-01-16",
+        time: "08:00",
+        bloodPressure: "145/85",
+        pulse: "76",
+        temperature: "98.0°F",
+        respirationRate: "14",
+        oxygenSaturation: "98%",
+        notes: "Improving condition"
+      }
+    ],
+    
+    // Lab Investigations
+    labInvestigations: [
+      {
+        testName: "Complete Blood Count (CBC)",
+        date: "2024-01-15",
+        status: "Done",
+        remarks: "WBC: 8.5, RBC: 4.8, Hemoglobin: 14.2, Platelets: 250,000"
+      },
+      {
+        testName: "Cardiac Enzymes (Troponin)",
+        date: "2024-01-15",
+        status: "Done",
+        remarks: "Troponin I: 2.5 ng/mL (elevated), CK-MB: 45 ng/mL"
+      },
+      {
+        testName: "Electrocardiogram (ECG)",
+        date: "2024-01-15",
+        status: "Done",
+        remarks: "ST-segment elevation in leads II, III, aVF"
+      },
+      {
+        testName: "Chest X-Ray",
+        date: "2024-01-15",
+        status: "Done",
+        remarks: "Normal cardiac silhouette, clear lung fields"
+      },
+      {
+        testName: "Echocardiogram",
+        date: "2024-01-16",
+        status: "Pending",
+        remarks: "Scheduled for tomorrow morning"
+      },
+      {
+        testName: "Lipid Profile",
+        date: "2024-01-16",
+        status: "Pending",
+        remarks: "Fasting required"
+      }
+    ],
+    
+    // Treatment Plan
+    treatmentPlan: {
+      currentTreatment: [
+        "Cardiac monitoring in CCU",
+        "Oxygen therapy as needed",
+        "Pain management with nitroglycerin",
+        "Antiplatelet therapy with aspirin",
+        "Beta-blocker therapy (Metoprolol)",
+        "ACE inhibitor therapy (Lisinopril)"
+      ],
+      dietRestrictions: [
+        "Low-sodium diet (<2g/day)",
+        "Low-fat diet",
+        "Diabetic diet (carbohydrate controlled)",
+        "No caffeine or alcohol"
+      ],
+      monitoringInstructions: [
+        "Continuous cardiac monitoring",
+        "Vital signs every 4 hours",
+        "Blood glucose monitoring 4 times daily",
+        "Daily weight measurement",
+        "Strict bed rest for first 24 hours"
+      ],
+      activityRestrictions: [
+        "Bed rest for first 24 hours",
+        "Gradual ambulation with assistance",
+        "No heavy lifting or strenuous activity",
+        "Cardiac rehabilitation referral upon discharge"
+      ]
+    },
+    
+    // Interim Billing Summary
+    billingSummary: {
+      roomCharges: {
+        dailyRate: 850,
+        daysStayed: 2,
+        total: 1700
+      },
+      doctorConsultation: {
+        cardiologist: 300,
+        emergencyPhysician: 200,
+        total: 500
+      },
+      medications: {
+        emergencyMedications: 150,
+        regularMedications: 75,
+        total: 225
+      },
+      labTests: {
+        cbc: 85,
+        cardiacEnzymes: 120,
+        ecg: 95,
+        chestXray: 110,
+        total: 410
+      },
+      procedures: {
+        ivInsertion: 50,
+        cardiacMonitoring: 200,
+        total: 250
+      },
+      totalCharges: 3085
+    },
+    
+    // Doctor's Notes
+    doctorsNotes: [
+      {
+        date: "2024-01-15",
+        time: "08:30",
+        doctor: "Dr. Sarah Wilson",
+        note: "Patient admitted with acute chest pain radiating to left arm. ECG shows ST-segment elevation consistent with inferior wall MI. Started on aspirin, nitroglycerin, and morphine for pain. Cardiac catheterization recommended."
+      },
+      {
+        date: "2024-01-15",
+        time: "14:00",
+        doctor: "Dr. Sarah Wilson",
+        note: "Patient's pain has improved with medication. Troponin levels elevated confirming myocardial infarction. Patient stable on cardiac monitoring. Family informed of condition."
+      },
+      {
+        date: "2024-01-16",
+        time: "09:00",
+        doctor: "Dr. Sarah Wilson",
+        note: "Patient had uneventful night. Vital signs stable. Pain controlled. Planning for cardiac catheterization today. Patient and family education provided regarding heart disease and lifestyle modifications."
+      }
+    ]
+  });
 
   useEffect(() => {
     const user = authAPI.getCurrentUser();
-    setLoggedInUser(user);
-    authAPI.getProfile().then(profile => setUserProfile(profile)).catch(() => setUserProfile(null));
+    setCurrentUser(user);
   }, []);
 
-  const [documents, setDocuments] = useState<Array<{
-    id: number;
-    name: string;
-    description: string;
-    doctorName: string;
-    uploadDate: string;
-    type: string;
-    file?: File;
-    fileUrl?: string;
-  }>>([
-    // Example data for demo
-    {
-      id: 1,
-      name: "X Ray Report",
-      description: "Is simply dummy text of The Printing And Typesetting Industry.",
-      doctorName: "Dr.Rosie Pearson",
-      uploadDate: "Jan 21, 2020",
-      type: "Radiology"
-    },
-    {
-      id: 2,
-      name: "X Ray Report",
-      description: "Is simply dummy text of The Printing And Typesetting Industry.",
-      doctorName: "Dr.Rosie Pearson",
-      uploadDate: "Jan 21, 2020",
-      type: "Radiology"
-    },
-    {
-      id: 3,
-      name: "X Ray Report",
-      description: "Is simply dummy text of The Printing And Typesetting Industry.",
-      doctorName: "Dr.Rosie Pearson",
-      uploadDate: "Jan 21, 2020",
-      type: "Radiology"
-    },
-    {
-      id: 4,
-      name: "X Ray Report",
-      description: "Is simply dummy text of The Printing And Typesetting Industry.",
-      doctorName: "Dr.Rosie Pearson",
-      uploadDate: "Jan 21, 2020",
-      type: "Radiology"
-    },
-    {
-      id: 5,
-      name: "X Ray Report",
-      description: "Is simply dummy text of The Printing And Typesetting Industry.",
-      doctorName: "Dr.Rosie Pearson",
-      uploadDate: "Jan 21, 2020",
-      type: "Radiology"
-    },
-    {
-      id: 6,
-      name: "X Ray Report",
-      description: "Is simply dummy text of The Printing And Typesetting Industry.",
-      doctorName: "Dr.Rosie Pearson",
-      uploadDate: "Jan 21, 2020",
-      type: "Radiology"
-    }
-  ]);
-
-  const [selectedReportName, setSelectedReportName] = useState("");
-  const [selectedDocumentDate, setSelectedDocumentDate] = useState("");
-  const [showUploadModal, setShowUploadModal] = useState(false);
-  const [uploadForm, setUploadForm] = useState({
-    name: "",
-    description: "",
-    doctorName: "",
-    type: ""
-  });
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-
-  // Get unique values for filters
-  const reportNames = Array.from(new Set(documents.map((d) => d.name)));
-  const documentDates = Array.from(new Set(documents.map((d) => d.uploadDate)));
-
-  // Filter documents
-  const filteredDocuments = documents.filter((doc) => {
-    const matchesReportName = selectedReportName ? doc.name === selectedReportName : true;
-    const matchesDate = selectedDocumentDate ? doc.uploadDate === selectedDocumentDate : true;
-    return matchesReportName && matchesDate;
-  });
-
-  const resetDocumentFilters = () => {
-    setSelectedReportName("");
-    setSelectedDocumentDate("");
-  };
-
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file && file.type === "application/pdf") {
-      setSelectedFile(file);
-      setUploadForm({
-        ...uploadForm,
-        name: file.name.replace(".pdf", ""),
-      });
-    } else {
-      alert("Please select a PDF file");
-    }
-  };
-
-  const handleUploadFormChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) => {
-    setUploadForm({ ...uploadForm, [e.target.name]: e.target.value });
-  };
-
-  const handleSaveDocument = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedFile) {
-      alert("Please select a PDF file");
-      return;
-    }
-    const fileUrl = URL.createObjectURL(selectedFile);
-    const newDocument = {
-      id: documents.length + 1,
-      name: uploadForm.name,
-      description: uploadForm.description,
-      doctorName: uploadForm.doctorName,
-      uploadDate: new Date().toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "short",
-        day: "2-digit",
-      }),
-      type: uploadForm.type,
-      file: selectedFile,
-      fileUrl: fileUrl,
-    };
-    setDocuments([...documents, newDocument]);
-    setShowUploadModal(false);
-    setUploadForm({ name: "", description: "", doctorName: "", type: "" });
-    setSelectedFile(null);
-    alert("Document uploaded successfully!");
-  };
-
-  const handleViewDocument = (document: any) => {
-    if (document.fileUrl) {
-      window.open(document.fileUrl, "_blank");
-    }
-  };
-
-  const handlePrint = (documentId: number) => {
-    const document = documents.find((doc) => doc.id === documentId);
-    if (document && document.fileUrl) {
-      const printWindow = window.open(document.fileUrl, "_blank");
-      printWindow?.addEventListener("load", () => {
-        printWindow.print();
-      });
-    }
-  };
+  const tabs = [
+    { id: 'overview', name: 'Overview', icon: '📋' },
+    { id: 'vitals', name: 'Vitals', icon: '❤️' },
+    { id: 'medications', name: 'Medications', icon: '💊' },
+    { id: 'labs', name: 'Lab Results', icon: '🔬' },
+    { id: 'treatment', name: 'Treatment', icon: '🏥' },
+    { id: 'billing', name: 'Billing', icon: '💰' },
+    { id: 'notes', name: 'Notes', icon: '📝' }
+  ];
 
   return (
-    <div className="min-h-screen min-w-[1200px] bg-[#f7f8fa] py-8 px-4 md:px-12">
-      <div className="w-full">
-        {/* Profile Header */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
-          <div className="flex items-center gap-4">
-            <Image src={"/pro.png"} alt={patient?.name || "Patient"} width={64} height={64} className="rounded-full object-cover w-16 h-16" />
-            <div className="flex flex-col justify-center">
-              <h2 className="text-lg font-bold text-black mb-1">
-                {loggedInUser?.username ? loggedInUser.username : "Logged User"}
-              </h2>
-              <div className="flex gap-6 text-sm text-black">
-                <span>Gender: <span className="text-green-500">{patient?.gender || "-"}</span></span>
-                <span>DOB: <span className="text-green-500">{userProfile?.dateOfBirth || patient?.dateOfBirth || "-"}</span></span>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+      {/* Header */}
+      <div className="bg-white shadow-sm border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between py-6">
+            <div className="flex items-center space-x-4">
+              <div className="flex-shrink-0">
+                <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
+                  <span className="text-white text-xl font-bold">MR</span>
+                </div>
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-black">Medical Records</h1>
+                <p className="text-sm text-black">Patient ID: {patientData.admissionDetails.patientId}</p>
+              </div>
+            </div>
+            <div className="mt-4 sm:mt-0 flex items-center space-x-3">
+              <div className="text-right">
+                <p className="text-sm text-black">Generated: {new Date().toLocaleDateString()}</p>
+                <p className="text-xs text-black">NHO Standards Compliant</p>
+              </div>
+              <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
+                Export PDF
+              </button>
+              <button
+                onClick={handleLogout}
+                className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors text-sm font-medium"
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Patient Overview Card */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2">
+              <div className="flex items-center space-x-4 mb-4">
+                <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                  <span className="text-white text-xl font-bold">
+                    {patientData.personalInfo.fullName.split(' ').map(n => n[0]).join('')}
+                  </span>
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-black">{patientData.personalInfo.fullName}</h2>
+                  <p className="text-black">{patientData.personalInfo.age} years • {patientData.personalInfo.gender} • {patientData.personalInfo.bloodGroup}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <p className="text-xs text-black uppercase tracking-wide">Department</p>
+                  <p className="font-semibold text-black">{patientData.admissionDetails.department}</p>
+                </div>
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <p className="text-xs text-black uppercase tracking-wide">Room</p>
+                  <p className="font-semibold text-black">{patientData.admissionDetails.roomNumber}</p>
+                </div>
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <p className="text-xs text-black uppercase tracking-wide">Doctor</p>
+                  <p className="font-semibold text-black">{patientData.admissionDetails.consultingDoctor}</p>
+                </div>
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <p className="text-xs text-black uppercase tracking-wide">Admitted</p>
+                  <p className="font-semibold text-black">{patientData.admissionDetails.admissionDate}</p>
+                </div>
+              </div>
+            </div>
+            <div className="lg:col-span-1">
+              <div className="bg-gradient-to-r from-red-500 to-pink-500 rounded-xl p-4 text-white h-full flex flex-col justify-center">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium">Admission Type</span>
+                  <span className="text-xs bg-white bg-opacity-20 px-3 py-1 rounded-full font-semibold">
+                    {patientData.admissionDetails.admissionType}
+                  </span>
+                </div>
+                <div className="flex items-center mb-3">
+                  <span className="text-2xl mr-2">🚨</span>
+                  <span className="text-lg font-bold">{patientData.admissionDetails.admissionType.toUpperCase()}</span>
+                </div>
+                <p className="text-sm opacity-90 leading-relaxed">{patientData.admissionDetails.reasonForAdmission}</p>
               </div>
             </div>
           </div>
         </div>
-        {/* Tabs */}
-        <div className="flex gap-16 border-b border-gray-200 mb-8 justify-center">
-          {TABS.map(tab => {
-            let href = "#";
-            if (typeof params.id === 'string') {
-              if (tab === "Dashboard") href = `/dashboard/patients/${params.id}`;
-              if (tab === "Profile") href = `/dashboard/patients/${params.id}?tab=Profile`;
-              if (tab === "Booking History") href = `/dashboard/patients/${params.id}?tab=Booking%20History`;
-              if (tab === "Document") href = `/patient/medical-records?id=${params.id}`;
-            }
-            return (
+
+        {/* Navigation Tabs */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-2 mb-8">
+          <nav className="flex space-x-1 overflow-x-auto">
+            {tabs.map((tab) => (
               <button
-                key={tab}
-                className={`relative px-10 py-4 text-lg font-medium transition-colors rounded-t-lg ${tab === activeTab ? 'bg-[#7b6ffb] text-white' : 'text-gray-500 hover:text-[#7b6ffb]'} `}
-                style={tab === activeTab ? { boxShadow: '0 4px 0 0 #1a1aff inset' } : {}}
-                aria-current={tab === activeTab ? 'page' : undefined}
-                onClick={() => setActiveTab(tab)}
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap ${
+                  activeTab === tab.id
+                    ? 'bg-blue-100 text-blue-700 shadow-sm'
+                    : 'text-black hover:text-black hover:bg-gray-50'
+                }`}
               >
-                {tab}
+                <span>{tab.icon}</span>
+                <span>{tab.name}</span>
               </button>
-            );
-          })}
+            ))}
+          </nav>
         </div>
 
         {/* Tab Content */}
-        <div className="w-full mx-auto">
-          {activeTab === "Dashboard" && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 items-center">
-              {/* Stat Cards - stacked vertically */}
-              <div className="flex flex-col gap-3">
-                <div className="rounded-xl bg-[#E6E8FC] p-4 flex flex-col items-center w-full">
-                  <span className="text-2xl font-bold text-[#5B7CFA]">{patient?.appointment_count || 0}</span>
-                  <span className="mt-1 text-sm text-black font-medium">Total Appointments</span>
-                </div>
-                <div className="rounded-xl bg-[#D2F6E7] p-4 flex flex-col items-center w-full">
-                  <span className="text-2xl font-bold text-[#22C55E]">{patient?.phone || 'N/A'}</span>
-                  <span className="mt-1 text-sm text-black font-medium">Phone Number</span>
-                </div>
-                <div className="rounded-xl bg-[#FEF6E7] p-4 flex flex-col items-center w-full">
-                  <span className="text-2xl font-bold text-[#F59E42]">{patient?.gender || 'N/A'}</span>
-                  <span className="mt-1 text-sm text-black font-medium">Gender</span>
+        <div className="space-y-8">
+          {/* Overview Tab */}
+          {activeTab === 'overview' && (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Medical History */}
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <h3 className="text-lg font-semibold text-black mb-4 flex items-center">
+                  <span className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                    📋
+                  </span>
+                  Medical History
+                </h3>
+                <div className="space-y-4">
+                  <div>
+                    <h4 className="font-medium text-black mb-2">Chronic Conditions</h4>
+                    <div className="space-y-2">
+                      {patientData.medicalHistory.chronicConditions.map((condition, index) => (
+                        <div key={index} className="bg-gray-50 rounded-lg p-3">
+                          <p className="text-sm text-black">{condition}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-black mb-2">Allergies</h4>
+                    <div className="space-y-2">
+                      {patientData.medicalHistory.allergies.map((allergy, index) => (
+                        <div key={index} className={`rounded-lg p-3 border ${
+                          allergy.severity === 'Severe' 
+                            ? 'bg-red-100 text-red-800 border-red-200' 
+                            : 'bg-yellow-100 text-yellow-800 border-yellow-200'
+                        }`}>
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <p className="font-medium">{allergy.allergen}</p>
+                              <p className="text-sm opacity-80">{allergy.reaction}</p>
+                            </div>
+                            <span className="text-xs px-2 py-1 rounded-full bg-white bg-opacity-50">
+                              {allergy.severity}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
-              {/* Medical History Card */}
-              <div className="bg-white rounded-xl shadow p-6 flex flex-col items-center justify-center w-full md:col-span-2">
-                <div className="text-lg font-bold text-black mb-3 text-center">Medical History</div>
-                <div className="text-sm text-gray-600 text-center">
-                  {patient?.medicalHistory || 'No medical history available.'}
+
+              {/* Emergency Contact */}
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <h3 className="text-lg font-semibold text-black mb-4 flex items-center">
+                  <span className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                    📞
+                  </span>
+                  Emergency Contact
+                </h3>
+                <div className="bg-green-50 rounded-lg p-4">
+                  <p className="font-semibold text-green-900">{patientData.personalInfo.emergencyContact.name}</p>
+                  <p className="text-sm text-green-700">{patientData.personalInfo.emergencyContact.relationship}</p>
+                  <p className="text-sm text-green-700">{patientData.personalInfo.emergencyContact.phone}</p>
+                </div>
+                <div className="mt-4">
+                  <h4 className="font-medium text-black mb-2">Contact Information</h4>
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-3">
+                      <span className="text-black">📱</span>
+                      <span className="text-sm text-black">{patientData.personalInfo.contactNumber}</span>
+                    </div>
+                    <div className="flex items-start space-x-3">
+                      <span className="text-black mt-1">📍</span>
+                      <span className="text-sm text-black">{patientData.personalInfo.address}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           )}
-          {activeTab === "Profile" && <ProfileForm />}
-          {activeTab === "Booking History" && <BookingHistoryTab />}
-          {activeTab === "Document" && (
-            <>
-              {/* Filter Bar */}
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-                <div className="flex flex-1 items-center gap-2 bg-white rounded-xl shadow-sm p-4">
-                  <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center shadow-sm">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46 22,3" />
-                    </svg>
-                  </div>
-                  <select
-                    value={selectedReportName}
-                    onChange={(e) => setSelectedReportName(e.target.value)}
-                    className="h-11 rounded-lg border border-gray-200 px-3 text-sm bg-white text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-40"
-                  >
-                    <option value="">Report Name ▼</option>
-                    {reportNames.map((name) => (
-                      <option key={name} value={name}>
-                        {name}
-                      </option>
-                    ))}
-                  </select>
-                  <select
-                    value={selectedDocumentDate}
-                    onChange={(e) => setSelectedDocumentDate(e.target.value)}
-                    className="h-11 rounded-lg border border-gray-200 px-3 text-sm bg-white text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-36"
-                  >
-                    <option value="">Date ▼</option>
-                    {documentDates.map((date) => (
-                      <option key={date} value={date}>
-                        {date}
-                      </option>
-                    ))}
-                  </select>
-                  <button
-                    onClick={resetDocumentFilters}
-                    className="flex items-center gap-2 text-red-500 hover:text-red-600 ml-auto px-3 py-2 rounded-lg hover:bg-red-50 transition-colors"
-                  >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
-                    </svg>
-                    Reset Filter
-                  </button>
-                </div>
-                <button
-                  onClick={() => setShowUploadModal(true)}
-                  className="bg-[#7b6ffb] text-white rounded-lg px-6 py-3 text-base font-semibold hover:bg-[#5B7CFA] transition-colors flex items-center gap-2 shadow"
-                >
-                  <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="10" />
-                    <line x1="12" y1="8" x2="12" y2="16" />
-                    <line x1="8" y1="12" x2="16" y2="12" />
-                  </svg>
-                  Create New Report
-                </button>
-              </div>
 
-              {/* Documents Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 w-full">
-                {filteredDocuments.map((document) => (
-                  <div
-                    key={document.id}
-                    className="bg-white rounded-xl border border-gray-100 p-6 hover:shadow-lg transition-shadow cursor-pointer flex flex-col justify-between min-h-[200px]"
-                    onClick={() => handleViewDocument(document)}
-                  >
-                    <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 bg-[#7b6ffb] rounded-lg flex items-center justify-center flex-shrink-0">
-                        <svg width="32" height="32" fill="white" viewBox="0 0 24 24">
-                          <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
-                          <path d="M8,12V14H16V12H8M8,16V18H13V16H8Z" fill="white" />
-                        </svg>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="text-lg font-semibold text-black mb-1">{document.name}</h3>
-                        <p className="text-sm text-gray-600 mb-2 line-clamp-2">{document.description}</p>
-                        <div className="space-y-1">
-                          <p className="text-sm text-black font-medium">{document.doctorName}</p>
-                          <p className="text-xs text-green-500">
-                            <span className="font-medium">Uploaded:</span> {document.uploadDate}
-                          </p>
-                        </div>
-                      </div>
+          {/* Vitals Tab */}
+          {activeTab === 'vitals' && (
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+              <h3 className="text-lg font-semibold text-black mb-6 flex items-center">
+                <span className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center mr-3">
+                  ❤️
+                </span>
+                Vital Signs Monitoring
+              </h3>
+              <div className="overflow-x-auto">
+                <table className="min-w-full">
+                  <thead>
+                    <tr className="border-b border-gray-200">
+                      <th className="text-left py-3 px-4 text-xs font-medium text-black uppercase tracking-wider">Date/Time</th>
+                      <th className="text-left py-3 px-4 text-xs font-medium text-black uppercase tracking-wider">BP</th>
+                      <th className="text-left py-3 px-4 text-xs font-medium text-black uppercase tracking-wider">Pulse</th>
+                      <th className="text-left py-3 px-4 text-xs font-medium text-black uppercase tracking-wider">Temp</th>
+                      <th className="text-left py-3 px-4 text-xs font-medium text-black uppercase tracking-wider">O2 Sat</th>
+                      <th className="text-left py-3 px-4 text-xs font-medium text-black uppercase tracking-wider">Notes</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {patientData.vitalsMonitoring.map((vital, index) => (
+                      <tr key={index} className="hover:bg-gray-50 transition-colors">
+                        <td className="py-4 px-4">
+                          <div>
+                            <p className="text-sm font-medium text-black">{vital.date}</p>
+                            <p className="text-xs text-black">{vital.time}</p>
+                          </div>
+                        </td>
+                        <td className="py-4 px-4">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            {vital.bloodPressure}
+                          </span>
+                        </td>
+                        <td className="py-4 px-4 text-sm text-black">{vital.pulse}</td>
+                        <td className="py-4 px-4 text-sm text-black">{vital.temperature}</td>
+                        <td className="py-4 px-4">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            {vital.oxygenSaturation}
+                          </span>
+                        </td>
+                        <td className="py-4 px-4 text-sm text-black max-w-xs">{vital.notes}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* Medications Tab */}
+          {activeTab === 'medications' && (
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+              <h3 className="text-lg font-semibold text-black mb-6 flex items-center">
+                <span className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
+                  💊
+                </span>
+                Current Medications
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {patientData.currentMedications.map((medication, index) => (
+                  <div key={index} className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-xl p-4 border border-purple-200">
+                    <div className="flex items-start justify-between mb-3">
+                      <h4 className="font-semibold text-black">{medication.name}</h4>
+                      <span className="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded-full">
+                        {medication.route}
+                      </span>
                     </div>
-                    <div className="flex gap-2 mt-4">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handlePrint(document.id);
-                        }}
-                        className="w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-lg flex items-center justify-center transition-colors flex-shrink-0"
-                        title="Print PDF"
-                      >
-                        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-                          <polyline points="6,9 6,2 18,2 18,9" />
-                          <path d="M6,18H4a2,2 0 0,1-2-2v-5a2,2 0 0,1,2-2H20a2,2 0 0,1,2,2v5a2,2 0 0,1-2,2H18" />
-                          <polyline points="6,14 6,22 18,22 18,14" />
-                        </svg>
-                      </button>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-black">Dosage:</span>
+                        <span className="font-medium text-black">{medication.dosage}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-black">Frequency:</span>
+                        <span className="font-medium text-black">{medication.frequency}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-black">Prescribed:</span>
+                        <span className="font-medium text-black">{medication.prescribedBy}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-black">Started:</span>
+                        <span className="font-medium text-black">{medication.startDate}</span>
+                      </div>
                     </div>
                   </div>
                 ))}
               </div>
-              {filteredDocuments.length === 0 && (
-                <div className="text-center py-12 text-black">
-                  {documents.length === 0 ? (
-                    <div>
-                      <svg className="mx-auto h-16 w-16 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                      </svg>
-                      <p className="text-lg font-medium text-black mb-2">No documents uploaded</p>
-                      <p className="text-sm text-black">Upload your first PDF document to get started</p>
-                      <button
-                        onClick={() => setShowUploadModal(true)}
-                        className="mt-4 bg-[#7b6ffb] text-white rounded-lg px-4 py-2 text-sm font-semibold hover:bg-[#5B7CFA] transition-colors"
-                      >
-                        Create New Report
-                      </button>
-                    </div>
-                  ) : (
-                    "No documents found matching your filters."
-                  )}
-                </div>
-              )}
-            </>
+            </div>
           )}
-        </div>
-      </div>
 
-      {/* Upload Modal */}
-      {showUploadModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="bg-white rounded-3xl shadow-xl p-10 w-full max-w-xl relative flex flex-col items-center">
-            <button
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl"
-              onClick={() => setShowUploadModal(false)}
-              aria-label="Close"
-            >
-              &times;
-            </button>
-            <h2 className="text-3xl  text-black font-bold text-center mb-8 mt-2">Place your reports</h2>
-            <label htmlFor="file-upload" className="w-full cursor-pointer flex flex-col items-center justify-center border-2 border-dashed border-[#a996fd] bg-[#e6e0fa] bg-opacity-70 rounded-2xl py-12 mb-8 transition hover:bg-[#d6cafd]">
-              <svg width="48" height="48" fill="none" viewBox="0 0 24 24" className="mb-2 text-[#7b6ffb]"><rect width="24" height="24" rx="6" fill="#a996fd" fillOpacity="0.3"/><path d="M12 8v8m0 0l-3-3m3 3l3-3" stroke="#7b6ffb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><rect x="8" y="16" width="8" height="2" rx="1" fill="#7b6ffb"/></svg>
-              <span className="text-lg font-medium text-[#7b6ffb]">Upload your files</span>
-              <input id="file-upload" type="file" accept="application/pdf" className="hidden" onChange={handleFileUpload} />
-            </label>
-            <form onSubmit={handleSaveDocument} className="w-full flex flex-col md:flex-row gap-4 items-center justify-between">
-              <div className="flex-1 w-full">
-                <label className="block text-gray-500 text-base mb-2" htmlFor="doc-name">Document Name</label>
-                <div className="flex items-center w-full bg-white border border-[#a996fd] rounded-full px-4 py-2 focus-within:ring-2 focus-within:ring-[#7b6ffb]">
-                  <input
-                    id="doc-name"
-                    name="name"
-                    value={uploadForm.name}
-                    onChange={handleUploadFormChange}
-                    placeholder="Document Name"
-                    className="flex-1 bg-transparent outline-none text-black text-lg font-medium"
-                    required
-                  />
-                  <svg width="22" height="22" fill="none" viewBox="0 0 24 24" className="ml-2 text-[#7b6ffb]"><rect width="24" height="24" rx="6" fill="#a996fd" fillOpacity="0.2"/><path d="M8 16V8a2 2 0 012-2h4a2 2 0 012 2v8" stroke="#7b6ffb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><rect x="8" y="16" width="8" height="2" rx="1" fill="#7b6ffb"/></svg>
+          {/* Lab Results Tab */}
+          {activeTab === 'labs' && (
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+              <h3 className="text-lg font-semibold text-black mb-6 flex items-center">
+                <span className="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center mr-3">
+                  🔬
+                </span>
+                Laboratory Investigations
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {patientData.labInvestigations.map((lab, index) => (
+                  <div key={index} className="border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow">
+                    <div className="flex items-start justify-between mb-3">
+                      <h4 className="font-semibold text-black">{lab.testName}</h4>
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${
+                        lab.status === 'Done' 
+                          ? 'bg-emerald-100 text-emerald-800 border-emerald-200' 
+                          : 'bg-amber-100 text-amber-800 border-amber-200'
+                      }`}>
+                        {lab.status}
+                      </span>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-black">Date:</span>
+                        <span className="font-medium text-black">{lab.date}</span>
+                      </div>
+                      <div>
+                        <span className="text-sm text-black">Remarks:</span>
+                        <p className="text-sm text-black mt-1">{lab.remarks}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Treatment Tab */}
+          {activeTab === 'treatment' && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                  <h3 className="text-lg font-semibold text-black mb-4 flex items-center">
+                    <span className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                      🏥
+                    </span>
+                    Current Treatment
+                  </h3>
+                  <div className="space-y-3">
+                    {patientData.treatmentPlan.currentTreatment.map((treatment, index) => (
+                      <div key={index} className="flex items-start space-x-3">
+                        <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></span>
+                        <p className="text-sm text-black">{treatment}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                  <h3 className="text-lg font-semibold text-black mb-4 flex items-center">
+                    <span className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center mr-3">
+                      🍽️
+                    </span>
+                    Diet Restrictions
+                  </h3>
+                  <div className="space-y-3">
+                    {patientData.treatmentPlan.dietRestrictions.map((restriction, index) => (
+                      <div key={index} className="flex items-start space-x-3">
+                        <span className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></span>
+                        <p className="text-sm text-black">{restriction}</p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
-              <button type="submit" className="w-full md:w-56 bg-[#7b6ffb] text-white rounded-full py-3 text-lg font-semibold mt-6 md:mt-0 shadow hover:bg-[#5B7CFA] transition">Submit</button>
-            </form>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                  <h3 className="text-lg font-semibold text-black mb-4 flex items-center">
+                    <span className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                      📊
+                    </span>
+                    Monitoring Instructions
+                  </h3>
+                  <div className="space-y-3">
+                    {patientData.treatmentPlan.monitoringInstructions.map((instruction, index) => (
+                      <div key={index} className="flex items-start space-x-3">
+                        <span className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></span>
+                        <p className="text-sm text-black">{instruction}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                  <h3 className="text-lg font-semibold text-black mb-4 flex items-center">
+                    <span className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center mr-3">
+                      ⚠️
+                    </span>
+                    Activity Restrictions
+                  </h3>
+                  <div className="space-y-3">
+                    {patientData.treatmentPlan.activityRestrictions.map((restriction, index) => (
+                      <div key={index} className="flex items-start space-x-3">
+                        <span className="w-2 h-2 bg-red-500 rounded-full mt-2 flex-shrink-0"></span>
+                        <p className="text-sm text-black">{restriction}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Billing Tab */}
+          {activeTab === 'billing' && (
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+              <h3 className="text-lg font-semibold text-black mb-6 flex items-center">
+                <span className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                  💰
+                </span>
+                Billing Summary
+              </h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 text-center">
+                  <p className="text-xs text-blue-600 uppercase tracking-wide mb-1">Room</p>
+                  <p className="text-xl font-bold text-blue-900">${patientData.billingSummary.roomCharges.total}</p>
+                </div>
+                <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 text-center">
+                  <p className="text-xs text-green-600 uppercase tracking-wide mb-1">Doctor</p>
+                  <p className="text-xl font-bold text-green-900">${patientData.billingSummary.doctorConsultation.total}</p>
+                </div>
+                <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-4 text-center">
+                  <p className="text-xs text-purple-600 uppercase tracking-wide mb-1">Medications</p>
+                  <p className="text-xl font-bold text-purple-900">${patientData.billingSummary.medications.total}</p>
+                </div>
+                <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-xl p-4 text-center">
+                  <p className="text-xs text-yellow-600 uppercase tracking-wide mb-1">Lab Tests</p>
+                  <p className="text-xl font-bold text-yellow-900">${patientData.billingSummary.labTests.total}</p>
+                </div>
+                <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-xl p-4 text-center">
+                  <p className="text-xs text-red-600 uppercase tracking-wide mb-1">Procedures</p>
+                  <p className="text-xl font-bold text-red-900">${patientData.billingSummary.procedures.total}</p>
+                </div>
+                <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-4 text-center">
+                  <p className="text-xs text-black uppercase tracking-wide mb-1">Total</p>
+                  <p className="text-xl font-bold text-black">${patientData.billingSummary.totalCharges}</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Notes Tab */}
+          {activeTab === 'notes' && (
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+              <h3 className="text-lg font-semibold text-black mb-6 flex items-center">
+                <span className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center mr-3">
+                  📝
+                </span>
+                Doctor's Notes
+              </h3>
+              <div className="space-y-4">
+                {patientData.doctorsNotes.map((note, index) => (
+                  <div key={index} className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-4 border-l-4 border-indigo-500">
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <p className="font-semibold text-black">{note.doctor}</p>
+                        <p className="text-sm text-black">{note.date} at {note.time}</p>
+                      </div>
+                      <span className="text-xs bg-indigo-100 text-indigo-800 px-2 py-1 rounded-full">
+                        Note #{index + 1}
+                      </span>
+                    </div>
+                    <p className="text-black leading-relaxed">{note.note}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="mt-12 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div className="text-center">
+            <p className="text-sm text-black mb-2">This document is generated in accordance with National Health Organization (NHO) standards</p>
+            <p className="text-xs text-black">For official use only - Medical Records Department</p>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 } 
